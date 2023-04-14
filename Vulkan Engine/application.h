@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ethereal_device.h" 
-#include "ethereal_pipeline.h"
-#include "ethereal_swap_chain.h"
+#include "ethereal_renderer.h"
 #include "ethereal_window.h"
+#include "ethereal_game_obj.h"
 
 //std
 #include <memory>
@@ -25,17 +25,20 @@ namespace ethereal {
 
 		void run();
 
+		void sierpinski(
+			std::vector<EtherealModel::Vertex>& vertices,
+			int depth,
+			glm::vec2 left,
+			glm::vec2 right,
+			glm::vec2 top);
+
 	private:
-		void createPipelineLayout();
-		void createPipeline();
-		void createCommandBuffers();
-		void drawFrame();
+		void loadGameObjects();
 
 		EtherealWindow etherealWindow{ WIDTH, HEIGHT, "Ethereal Vulkan Engine" };
 		EtherealDevice etherealDevice{ etherealWindow };
-		EtherealSwapChain etherealSwapChain{ etherealDevice, etherealWindow.getExtent()};
-		std::unique_ptr<EtherealPipeline> etherealPipeline;
-		VkPipelineLayout pipelineLayout;
-		std::vector<VkCommandBuffer> commandBuffers;
+		EtherealRenderer etherealRenderer{ etherealWindow, etherealDevice };
+
+		std::vector<EtherealGameObject> gameObjects;
 	};
 }

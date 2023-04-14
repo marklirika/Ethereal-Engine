@@ -2,7 +2,7 @@
 
 namespace ethereal {
 
-	EtherealWindow::EtherealWindow(int width, int height, std::string windowName) : WIDTH{ width }, HEIGHT{ height }, windowName{ windowName } {
+	EtherealWindow::EtherealWindow(int width, int height, std::string windowName) : width{ width }, height{ height }, windowName{ windowName } {
 		EtherealWindow::initWindow();
 	}
 
@@ -14,9 +14,11 @@ namespace ethereal {
 	void EtherealWindow::initWindow() {
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-		window = glfwCreateWindow(WIDTH, HEIGHT, windowName.c_str(), nullptr, nullptr);
+		window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+		glfwSetWindowUserPointer(window, this); 
+		glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 	}
 
 	void EtherealWindow::createWindowSurface(VkInstance instance, VkSurfaceKHR * surface) {
@@ -24,4 +26,11 @@ namespace ethereal {
 			throw std::runtime_error("failed to create window surface");
 		}
 	} 
+	void EtherealWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+		auto etherealWindow = reinterpret_cast<EtherealWindow*> (glfwGetWindowUserPointer(window));
+		
+		etherealWindow->framebufferResized = true;
+		etherealWindow->width = width;
+		etherealWindow->height = height;
+	}
 }

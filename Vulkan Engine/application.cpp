@@ -1,54 +1,80 @@
 #include "application.h"
+#include "ethereal_render_system.h"
 
-//std
+#define GLM_FORCE_RADIANCE
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp> 
+
+
 #include <stdexcept>;
+#include <array>
+#include <string>
+#include <iostream>
+#include <memory>
 
 namespace ethereal {
 
 	Application::Application() {
-		createPipelineLayout();
-		createPipeline();
-		createCommandBuffers();
+		loadGameObjects();
 	}
 
-	Application::~Application() {
-		vkDestroyPipelineLayout(etherealDevice.device(), pipelineLayout, nullptr); 
-	}
+	Application::~Application() {}
 
 	void Application::run() {
-		while (!etherealWindow.shouldClose()){
+		EtherealRenderSystem etherealRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass() };
+		while (!etherealWindow.shouldClose()) {
 			glfwPollEvents();
+			
+			if (auto commandBuffer = etherealRenderer.beginFrame()) {
+				etherealRenderer.beginSwapChainRenderPass(commandBuffer);
+				etherealRenderSystem.renderGameObjects(commandBuffer, gameObjects);
+				etherealRenderer.endSwapChainRenderPass(commandBuffer);
+				etherealRenderer.endFrame();
+			}
+		}
+
+		vkDeviceWaitIdle(etherealDevice.device());
+	}
+
+	//sierpinski(vertices, 5, glm::vec2(-0.5f, 0.5f), glm::vec2(0.5f, 0.5f), glm::vec2(0.0f, -0.5f));
+	void Application::loadGameObjects() {
+		std::vector<EtherealModel::Vertex> vertices = {
+			{{ 0.5f, 0.5f } , {1.0f, 0.0f, 0.0f}},
+			{{ 0.0f, -0.5f }, {0.0f, 1.0f, 0.0f}},
+			{{ -0.5f, 0.5f },{0.0f, 0.0f, 1.0f}}
+		};
+		auto etherealModel = std::make_shared<EtherealModel>(etherealDevice, vertices);
+
+		auto triangle = EtherealGameObject::createGameObject();
+		triangle.model = etherealModel;
+		triangle.color = { .1f, .8f, .1f };
+		triangle.transform2D.translation.x = .0f;	
+		triangle.transform2D.scale = { 1.f, 1.f };
+		triangle.transform2D.rotation = .25f * glm::two_pi<float>();
+
+		gameObjects.push_back(std::move(triangle));
+	}
+
+	void Application::sierpinski(
+		std::vector<EtherealModel::Vertex>& vertices,
+		int depth, 
+		glm::vec2 left,
+		glm::vec2 right,
+		glm::vec2 top) {
+		if (depth <= 0) {
+			EtherealModel::Vertex a = { {top}, {1.0f, 0.0f, 0.0f} };
+			vertices.push_back(EtherealModel::Vertex(top, { 1.0f, 0.0f, 0.0f }));
+			vertices.push_back(EtherealModel::Vertex(right, { 0.0f, 1.0f, 0.0f }));
+			vertices.push_back(EtherealModel::Vertex(left, { 0.0f, 0.0f, 1.0f }));
+		}
+		else {
+			auto leftTop = 0.5f * (left + top);
+			auto rightTop = 0.5f * (right + top);
+			auto leftRight = 0.5f * (left + right);
+			sierpinski(vertices, depth - 1, left, leftRight, leftTop);
+			sierpinski(vertices, depth - 1, leftRight, right, rightTop);
+			sierpinski(vertices, depth - 1, leftTop, rightTop, top);
 		}
 	}
-
-	void Application::createPipelineLayout() {
-		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 0;
-		pipelineLayoutInfo.pSetLayouts = nullptr;
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
-
-		if (vkCreatePipelineLayout(etherealDevice.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
-			throw std::runtime_error("fail to create pipelinelayout");
-	}
-
-	void Application::createPipeline() {
-		PipelineConfigInfo pipelineConfig{};
-		EtherealPipeline::defaultPipelineConfigInfo(pipelineConfig, etherealSwapChain.width(), etherealSwapChain.height());
-		pipelineConfig.renderPass = etherealSwapChain.getRenderPass();
-		pipelineConfig.pipelineLayout = pipelineLayout;
- 		etherealPipeline = std::make_unique<EtherealPipeline>(
-			etherealDevice,
-			"shaders/vertex_shader.vert.spv",
-			"shaders/fragment_shader.frag.spv",
-			pipelineConfig);
-	}
-
-	void Application::createCommandBuffers() {
-		commandBuffers.resize(etherealSwapChain.imageCount());
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	}
-	void Application::drawFrame() {}
 }

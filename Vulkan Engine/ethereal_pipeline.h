@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 
 #include "ethereal_device.h"
 
@@ -9,9 +9,12 @@
 namespace ethereal {
 
 	struct PipelineConfigInfo {
+ 		
+		PipelineConfigInfo() = default;
 
-		VkViewport viewport;
-		VkRect2D scissor;
+		PipelineConfigInfo(const PipelineConfigInfo&) = delete;
+		PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
+
 		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
@@ -19,6 +22,8 @@ namespace ethereal {
 		VkPipelineColorBlendAttachmentState colorBlendAttachment;
 		VkPipelineColorBlendStateCreateInfo colorBlendInfo;
 		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+		std::vector<VkDynamicState> dynamicStateEnables;
+		VkPipelineDynamicStateCreateInfo dynamicStateInfo;
 		VkPipelineLayout pipelineLayout = nullptr;
 		VkRenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
@@ -30,10 +35,12 @@ namespace ethereal {
 		EtherealPipeline(EtherealDevice& device, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& configInfo);
 		~EtherealPipeline();
 
+		void bind(VkCommandBuffer commandBuffer);
+
 		EtherealPipeline(const EtherealPipeline&) = delete;
 		EtherealPipeline &operator=(EtherealPipeline&) = delete; 
 
-		static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo, uint32_t width, uint32_t height);
+		static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 
 	private:
 		static std::vector<char> readFile(const std::string& filepath);
