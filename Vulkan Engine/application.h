@@ -3,7 +3,9 @@
 #include "ethereal_device.h" 
 #include "ethereal_renderer.h"
 #include "ethereal_window.h"
+#include "ethereal_camera.h"
 #include "ethereal_game_obj.h"
+#include "ethereal_descriptors.h"
 
 //std
 #include <memory>
@@ -39,6 +41,7 @@ namespace ethereal {
 		EtherealDevice etherealDevice{ etherealWindow };
 		EtherealRenderer etherealRenderer{ etherealWindow, etherealDevice };
 
-		std::vector<EtherealGameObject> gameObjects;
+		std::unique_ptr<EtherealDescriptorPool> globalPool{};
+		EtherealGameObject::Map gameObjects;
 	};
 }

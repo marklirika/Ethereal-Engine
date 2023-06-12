@@ -27,6 +27,8 @@ namespace ethereal {
 
 		void resetWindowResizedFlag() { framebufferResized = false; }
 
+		GLFWwindow* getGLFWwindow() const { return window; }
+
 	private:
 		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 		void initWindow();

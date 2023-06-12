@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{1254de14-c7c8-4745-b8de-f620cd91e0aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Open Simplex Noise">
+      <UniqueIdentifier>{918cfb3f-a78a-441d-83f2-467395e8f7ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -40,6 +46,27 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="ethereal_render_system.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ethereal_camera.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="KeybordInput.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ethereal_game_obj.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ethereal_buffer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ethereal_descriptor.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="open_simplex_noise.cpp">
+      <Filter>Open Simplex Noise</Filter>
+    </ClCompile>
+    <ClCompile Include="lightpoint_render_system.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,5 +101,60 @@
     <ClInclude Include="ethereal_render_system.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="ethereal_camera.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="KeybordInput.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ethereal_buffer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ethereal_frame_info.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ethereal_descriptors.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="open_simplex_noise.h">
+      <Filter>Open Simplex Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="lightpoint_render_system.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\compile.bat">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\fragment_shader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\fragment_shader.frag.spv">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\vertex_shader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\vertex_shader.vert.spv">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\lightpoint.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\lightpoint.frag">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Vulkan Engine.rc">
+      <Filter>Файлы ресурсов</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

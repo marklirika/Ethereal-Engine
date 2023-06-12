@@ -13,17 +13,18 @@
 
 namespace ethereal {
 
-	class EtherealRenderSystem {
+	class LightPointRenderSystem {
 
 	public:
 
-		EtherealRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
-		~EtherealRenderSystem();
+		LightPointRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+		~LightPointRenderSystem();
 
-		EtherealRenderSystem(const EtherealRenderSystem&) = delete;
-		EtherealRenderSystem& operator=(const EtherealRenderSystem&) = delete;
+		LightPointRenderSystem(const LightPointRenderSystem&) = delete;
+		LightPointRenderSystem& operator=(const LightPointRenderSystem&) = delete;
 
-		void renderGameObjects(FrameInfo &frameInfo);
+		void update(FrameInfo& frameInfo, GlobalUBO& ubo);
+		void render(FrameInfo &frameInfo);
 
 	private:
 		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);	

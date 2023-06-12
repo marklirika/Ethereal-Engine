@@ -33,6 +33,8 @@ namespace ethereal {
 			return currentFrameIndex;
 		}
 		VkRenderPass getSwapChainRenderPass() const { return etherealSwapChain->getRenderPass(); }
+		float getAspectRation() const { return etherealSwapChain->extentAspectRatio(); }
+
 
 		VkCommandBuffer beginFrame();
 		void endFrame();
