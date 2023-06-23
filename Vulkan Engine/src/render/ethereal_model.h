@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ethereal_device.h"
-#include "ethereal_buffer.h"
+#include "../core/ethereal_device.h"
+#include "../memory/ethereal_buffer.h"
 
 #define GLM_FORCE_RADIANCE
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

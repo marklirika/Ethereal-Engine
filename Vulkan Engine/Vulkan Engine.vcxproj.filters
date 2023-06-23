@@ -21,111 +21,114 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_window.cpp">
+    <ClCompile Include="src\core\ethereal_window.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="application.cpp">
+    <ClCompile Include="src\core\application.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_pipeline.cpp">
+    <ClCompile Include="src\core\ethereal_pipeline.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_device.cpp">
+    <ClCompile Include="src\core\ethereal_device.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_swap_chain.cpp">
+    <ClCompile Include="src\core\ethereal_swap_chain.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_model.cpp">
+    <ClCompile Include="src\render\ethereal_model.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_renderer.cpp">
+    <ClCompile Include="src\render\ethereal_renderer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_render_system.cpp">
+    <ClCompile Include="src\render\render systems\ethereal_render_system.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_camera.cpp">
+    <ClCompile Include="src\render\ethereal_camera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="KeybordInput.cpp">
+    <ClCompile Include="src\utility\KeybordInput.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_game_obj.cpp">
+    <ClCompile Include="src\ECS\ethereal_game_obj.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_buffer.cpp">
+    <ClCompile Include="src\memory\ethereal_buffer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ethereal_descriptor.cpp">
+    <ClCompile Include="src\memory\ethereal_descriptor.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="open_simplex_noise.cpp">
+    <ClCompile Include="src\utility\open_simplex_noise.cpp">
       <Filter>Open Simplex Noise</Filter>
     </ClCompile>
-    <ClCompile Include="lightpoint_render_system.cpp">
+    <ClCompile Include="src\render\render systems\lightpoint_render_system.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ethereal_window.h">
+    <ClInclude Include="src\core\ethereal_window.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="application.h">
+    <ClInclude Include="src\core\application.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_pipeline.h">
+    <ClInclude Include="src\core\ethereal_pipeline.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_device.h">
+    <ClInclude Include="src\core\ethereal_device.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_swap_chain.h">
+    <ClInclude Include="src\core\ethereal_swap_chain.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_model.h">
+    <ClInclude Include="src\render\ethereal_model.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="src\resource.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_game_obj.h">
+    <ClInclude Include="src\ECS\ethereal_game_obj.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_renderer.h">
+    <ClInclude Include="src\render\ethereal_renderer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_render_system.h">
+    <ClInclude Include="src\render\render systems\ethereal_render_system.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_camera.h">
+    <ClInclude Include="src\render\ethereal_camera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="KeybordInput.h">
+    <ClInclude Include="src\utility\KeybordInput.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="resource1.h">
+    <ClInclude Include="src\utility\utils.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
+    <ClInclude Include="src\memory\ethereal_buffer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_buffer.h">
+    <ClInclude Include="src\memory\ethereal_frame_info.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_frame_info.h">
+    <ClInclude Include="src\memory\ethereal_descriptors.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ethereal_descriptors.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="open_simplex_noise.h">
+    <ClInclude Include="src\utility\open_simplex_noise.h">
       <Filter>Open Simplex Noise</Filter>
     </ClInclude>
-    <ClInclude Include="lightpoint_render_system.h">
+    <ClInclude Include="src\render\render systems\lightpoint_render_system.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

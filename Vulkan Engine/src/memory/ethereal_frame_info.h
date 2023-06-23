@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ethereal_camera.h"
-#include "ethereal_game_obj.h"
+#include "../render/ethereal_camera.h"
+#include "../ECS/ethereal_game_obj.h"
 
 #include <vulkan/vulkan.h>
 

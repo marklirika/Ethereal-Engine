@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ethereal_game_obj.h"
-#include "ethereal_window.h"
+#include "../ECS/ethereal_game_obj.h"
+#include "../core/ethereal_window.h"
 
 namespace ethereal {
 

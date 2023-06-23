@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ethereal_device.h" 
-#include "ethereal_swap_chain.h"
-#include "ethereal_window.h"
-#include "cassert"
+#include "../core/ethereal_device.h" 
+#include "../core/ethereal_swap_chain.h"
+#include "../core/ethereal_window.h"
 
 //std
+#include <cassert>
 #include <memory>
 #include <vector>
 

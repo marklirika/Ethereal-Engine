@@ -1,5 +1,5 @@
 #pragma once
-#include "ethereal_model.h"
+#include "../render/ethereal_model.h"
 
 #include <memory>
 #include <unordered_map>

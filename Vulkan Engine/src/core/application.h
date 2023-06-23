@@ -1,11 +1,11 @@
 #pragma once
 
 #include "ethereal_device.h" 
-#include "ethereal_renderer.h"
+#include "../render/ethereal_renderer.h"
 #include "ethereal_window.h"
-#include "ethereal_camera.h"
-#include "ethereal_game_obj.h"
-#include "ethereal_descriptors.h"
+#include "../render/ethereal_camera.h"
+#include "../ECS/ethereal_game_obj.h"
+#include "../memory/ethereal_descriptors.h"
 
 //std
 #include <memory>

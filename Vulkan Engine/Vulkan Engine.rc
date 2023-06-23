@@ -1,7 +1,7 @@
 // Скрипт ресурсов, созданный в Microsoft Visual C++.
 //
 
-#include "resource1.h"
+#include "src/resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////

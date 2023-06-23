@@ -1,5 +1,5 @@
 #include "ethereal_model.h"
-#include "utils.h"
+#include "../utility/utils.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tobjloader.h>

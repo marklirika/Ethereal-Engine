@@ -1,10 +1,10 @@
 #include "application.h"
 
-#include "KeybordInput.h"
-#include "ethereal_render_system.h"
-#include "lightpoint_render_system.h"
+#include "../utility/KeybordInput.h"
+#include "../render/render systems/ethereal_render_system.h"
+#include "../render/render systems/lightpoint_render_system.h"
 
-#include "ethereal_buffer.h"
+#include "../memory/ethereal_buffer.h"
 
 #define GLM_FORCE_RADIANCE
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

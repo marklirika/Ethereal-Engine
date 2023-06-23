@@ -1,5 +1,5 @@
 #include "ethereal_pipeline.h"
-#include "ethereal_model.h"
+#include "../render/ethereal_model.h"
 
 //std
 #include <fstream>

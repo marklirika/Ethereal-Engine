@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ethereal_device.h"
+#include "../core/ethereal_device.h"
 
 namespace ethereal {
 
