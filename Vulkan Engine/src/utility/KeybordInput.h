@@ -5,7 +5,7 @@
 
 namespace ethereal {
 
-	class Keybord {
+	class CameraController {
     public:
         struct KeyMappings {
             int moveLeft = GLFW_KEY_A;

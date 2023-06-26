@@ -1,16 +1,17 @@
 #include "application.h"
 
 #include "../utility/KeybordInput.h"
-#include "../render/render systems/ethereal_render_system.h"
-#include "../render/render systems/lightpoint_render_system.h"
 
+#include "../ECS/render systems/ethereal_render_system.h"
+#include "../ECS/render systems/lightpoint_render_system.h"
 #include "../memory/ethereal_buffer.h"
 
 #define GLM_FORCE_RADIANCE
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp> 
+
+//std
 #include <chrono>
 #include <stdexcept>;
 #include <array>
@@ -27,7 +28,7 @@ namespace ethereal {
 			.setMaxSets(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.build();
-		loadGameObjects();
+		loadMeshes();
 	}
 
 	Application::~Application() {}
@@ -42,27 +43,39 @@ namespace ethereal {
 				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 			uboBuffers[i]->map();
-		}
+		} 
 
+		//setting descriptors global set layout
 		auto globalSetLayout = EtherealDescriptorSetLayout::Builder(etherealDevice)
 			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-			.build();
+			.build(); 
 
+		//setting descriptors global sets
 		std::vector<VkDescriptorSet> globalDescriptorSets(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < globalDescriptorSets.size(); i++) {
 			auto bufferInfo = uboBuffers[i]->descriptorInfo();
 			EtherealDescriptorWriter(*globalSetLayout, *globalPool).writeBuffer(0, &bufferInfo).build(globalDescriptorSets[i]);
 		}
 
-		EtherealRenderSystem etherealRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
-		LightPointRenderSystem lightPointRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
-        EtherealCamera camera{};
+		//setting render systems
+		MeshRenderSystem etherealRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
+		PointLightRenderSystem lightPointRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
+        
+		//setting camera
+		EtherealCamera camera{};
         camera.setViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
+
+		//setting viewer
         auto viewerObject = EtherealGameObject::createGameObject();
 		viewerObject.transform.translation.z = -2.5f;
-        Keybord cameraController{};
+			
+		//setting camera controller
+		CameraController cameraController{};
+
+		//setting frame time
         auto startFrameTime = std::chrono::high_resolution_clock::now();
 
+		//Main Loop
 		while (!etherealWindow.shouldClose()) {
 			glfwPollEvents();
 
@@ -76,10 +89,13 @@ namespace ethereal {
             float aspect = etherealRenderer.getAspectRation();
             //camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
             camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
+			
 			if (auto commandBuffer = etherealRenderer.beginFrame()) {
+				std::size_t size = scene.getRegistry().size();
+				std::cout << "Size of registry: " << size << std::endl;
 				int frameIndex = etherealRenderer.getFrameIndex();
 				FrameInfo frameInfo { 
-					frameIndex, frameTime, commandBuffer, camera, globalDescriptorSets[frameIndex],	gameObjects	
+					frameIndex, frameTime, commandBuffer, camera, globalDescriptorSets[frameIndex],	gameObjects, scene	
 				};
 
 				//update
@@ -100,25 +116,26 @@ namespace ethereal {
 			}
 		}
 
-		vkDeviceWaitIdle(etherealDevice.device());
+		auto result = vkDeviceWaitIdle(etherealDevice.device());
+		if(!result){
+			throw std::runtime_error("failed to wait device idle");
+		}
 	}
 
-	void Application::loadGameObjects() {
-        std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/smooth_vase.obj");
-		auto flatVase = EtherealGameObject::createGameObject();
-		flatVase.model = etherealModel;
-		flatVase.transform.translation = { -.5f, .5f, 0.f };
-		flatVase.transform.scale = { 3.f, 1.5f, 3.f };
-		gameObjects.emplace(flatVase.getId(), std::move(flatVase));
+	void Application::loadMeshes() {
+		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/smooth_vase.obj");
+		
+		auto flatVase = scene.createEntity("flatVase");
+		auto& flatVaseMesh = flatVase.addComponent<MeshComponent>(etherealModel);
+		//flatVaseMesh.model = etherealModel;
+		auto& flatVaseTransfrom = flatVase.getComponent<TransformComponent>();
+		flatVaseTransfrom.translation = { -.5f, .5f, 0.f };
+		flatVaseTransfrom.scale = { 3.f, 1.5f, 3.f };
 
-		etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/flat_vase.obj");
-		auto smoothVase = EtherealGameObject::createGameObject();
-		smoothVase.model = etherealModel;
-		smoothVase.transform.translation = { .5f, .5f, 0.f };
-		smoothVase.transform.scale = { 3.f, 1.5f, 3.f };
-		gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
+		std::size_t size = scene.getRegistry().size();
+		std::cout << "Size of registry: " << size << std::endl;
 
-		std::vector<glm::vec3> lightColors{
+		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},
 			{.1f, .1f, 1.f},
 			{.1f, 1.f, .1f},
@@ -128,15 +145,15 @@ namespace ethereal {
 		};
 
 		for (int i = 0; i < lightColors.size(); i++) {
-			auto lightPointObj = EtherealGameObject::makeLightPoint(0.8f);
-				lightPointObj.color = lightColors[i];
+			const std::string name = "point light " + std::to_string(i);
+			auto pointLightEntity = scene.createEntity(name);
+			auto& pointLight = pointLightEntity.addComponent<PointLightComponent>(1.f, lightColors[i]);
 			auto rotateLight = glm::rotate(
 				glm::mat4{ 1.f },
 				(i * glm::two_pi<float>()) / lightColors.size(), 
 				{ 0.f, -1.f, 0.f });
 
-			lightPointObj.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
-			gameObjects.emplace(lightPointObj.getId(), std::move(lightPointObj));
+			pointLightEntity.getComponent<TransformComponent>().translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
 		}
 	}
 }

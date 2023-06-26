@@ -12,17 +12,18 @@
 
 namespace ethereal {
 
-	class EtherealRenderSystem {
+	class PointLightRenderSystem {
 
 	public:
 
-		EtherealRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
-		~EtherealRenderSystem();
+		PointLightRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+		~PointLightRenderSystem();
 
-		EtherealRenderSystem(const EtherealRenderSystem&) = delete;
-		EtherealRenderSystem& operator=(const EtherealRenderSystem&) = delete;
+		PointLightRenderSystem(const PointLightRenderSystem&) = delete;
+		PointLightRenderSystem& operator=(const PointLightRenderSystem&) = delete;
 
-		void renderGameObjects(FrameInfo &frameInfo);
+		void update(FrameInfo& frameInfo, GlobalUBO& ubo);
+		void render(FrameInfo &frameInfo);
 
 	private:
 		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);	

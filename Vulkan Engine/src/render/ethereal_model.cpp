@@ -101,24 +101,6 @@ namespace ethereal {
 
 	}
 
-	void EtherealModel::bind(VkCommandBuffer commandBuffer) {
-		VkBuffer buffers[] = { vertexBuffer->getBuffer()};
-		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-		if (hasIndexBuffer) {
-			vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
-		}
-	}
-
-	void EtherealModel::draw(VkCommandBuffer commandBuffer) {
-		if (hasIndexBuffer) {
-			vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
-		}
-		else {
-			vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
-		}
-	}
-
 	std::vector<VkVertexInputBindingDescription> EtherealModel::Vertex::getBindingDescriptions() {
 		std::vector<VkVertexInputBindingDescription> bindingDescription(1);
 		bindingDescription[0].binding = 0;

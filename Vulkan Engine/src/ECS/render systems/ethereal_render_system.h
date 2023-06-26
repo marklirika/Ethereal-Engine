@@ -12,18 +12,19 @@
 
 namespace ethereal {
 
-	class LightPointRenderSystem {
+	class MeshRenderSystem {
 
 	public:
+		MeshRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+		~MeshRenderSystem();
 
-		LightPointRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
-		~LightPointRenderSystem();
+		MeshRenderSystem(const MeshRenderSystem&) = delete;
+		MeshRenderSystem& operator=(const MeshRenderSystem&) = delete;
 
-		LightPointRenderSystem(const LightPointRenderSystem&) = delete;
-		LightPointRenderSystem& operator=(const LightPointRenderSystem&) = delete;
+		void bind(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer);
+		void draw(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer);
 
-		void update(FrameInfo& frameInfo, GlobalUBO& ubo);
-		void render(FrameInfo &frameInfo);
+		void renderGameObjects(FrameInfo &frameInfo);
 
 	private:
 		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);	

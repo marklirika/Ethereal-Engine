@@ -1,10 +1,10 @@
 #include "ethereal_render_system.h"
-
 #define GLM_FORCE_RADIANCE
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp> 
 
+#include <iostream>
 #include <memory>
 #include <vector>
 namespace ethereal {
@@ -14,17 +14,17 @@ namespace ethereal {
 		glm::mat4 normalMatrix{ 1.f };
 	};
 
-	EtherealRenderSystem::EtherealRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout) 
+	MeshRenderSystem::MeshRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout) 
 		: etherealDevice{ device } {
 		createPipelineLayout(globalSetLayout);
 		createPipeline(renderPass);
 	}
 
-	EtherealRenderSystem::~EtherealRenderSystem() {
+	MeshRenderSystem::~MeshRenderSystem() {
 		vkDestroyPipelineLayout(etherealDevice.device(), pipelineLayout, nullptr);
 	}
 
-	void EtherealRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
+	void MeshRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
 
 		VkPushConstantRange pushConstantRange{};
 		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -44,7 +44,7 @@ namespace ethereal {
 			throw std::runtime_error("fail to create pipelinelayout");
 	}
 
-	void EtherealRenderSystem::createPipeline(VkRenderPass renderPass) {
+	void MeshRenderSystem::createPipeline(VkRenderPass renderPass) {
 		assert(pipelineLayout != nullptr && "Cannot create pipeline before pupeline layout");
 
 		PipelineConfigInfo pipelineConfig{};
@@ -58,7 +58,25 @@ namespace ethereal {
 			pipelineConfig);
 	}
 
-	void EtherealRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
+	void MeshRenderSystem::bind(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer) {
+		VkBuffer buffers[] = { model->vertexBuffer->getBuffer() };
+		VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+		if (model->hasIndexBuffer) {
+			vkCmdBindIndexBuffer(commandBuffer, model->indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		}
+	}
+
+	void MeshRenderSystem::draw(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer) {
+		if (model->hasIndexBuffer) {
+			vkCmdDrawIndexed(commandBuffer, model->indexCount, 1, 0, 0, 0);
+		}
+		else {
+			vkCmdDraw(commandBuffer, model->vertexCount, 1, 0, 0);
+		}
+	}
+
+	void MeshRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
 		etherealPipeline->bind(frameInfo.commandBuffer);
 
 		vkCmdBindDescriptorSets(frameInfo.commandBuffer,
@@ -69,14 +87,16 @@ namespace ethereal {
 			&frameInfo.globaDescriptorSet,
 			0,
 			nullptr);
-		
-		for (auto& kv : frameInfo.gameObjects) {
-			auto& obj = kv.second;
-			if (obj.model == nullptr) continue;
-			
+
+		auto view = frameInfo.scene.getRegistry().view<MeshComponent,TransformComponent>();
+
+		for (auto entity : view) {
+			auto& mesh = view.get<MeshComponent>(entity);
+			auto& transform = view.get<TransformComponent>(entity);
 			SimplePushConstantData push{};
-			push.modelMatrix = obj.transform.mat4();
-			push.normalMatrix = obj.transform.normalMatrix();
+			push.modelMatrix = transform.mat4();
+			push.normalMatrix = transform.normalMatrix();
+
 			vkCmdPushConstants(frameInfo.commandBuffer,
 				pipelineLayout,
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -84,8 +104,8 @@ namespace ethereal {
 				sizeof(SimplePushConstantData),
 				&push);
 
-			obj.model->bind(frameInfo.commandBuffer);
-			obj.model->draw(frameInfo.commandBuffer);
+			bind(mesh.model, frameInfo.commandBuffer);
+			draw(mesh.model, frameInfo.commandBuffer);
 		}
 	}
 }

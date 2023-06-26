@@ -11,28 +11,28 @@
 
 namespace ethereal {
 
-	struct LightPointPushConstants {
+	struct PointLightPushConstants {
 		glm::vec4 position{};
 		glm::vec4 color{};
 		float radius;
 	};
 
-	LightPointRenderSystem::LightPointRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
+	PointLightRenderSystem::PointLightRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
 		: etherealDevice{ device } {
 		createPipelineLayout(globalSetLayout);
 		createPipeline(renderPass);
 	}
 
-	LightPointRenderSystem::~LightPointRenderSystem() {
+	PointLightRenderSystem::~PointLightRenderSystem() {
 		vkDestroyPipelineLayout(etherealDevice.device(), pipelineLayout, nullptr);
 	}
 
-	void LightPointRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
+	void PointLightRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
 
 		VkPushConstantRange pushConstantRange{};
 		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		pushConstantRange.offset = 0;
-		pushConstantRange.size = sizeof(LightPointPushConstants);
+		pushConstantRange.size = sizeof(PointLightPushConstants);
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ globalSetLayout };
 
@@ -47,7 +47,7 @@ namespace ethereal {
 			throw std::runtime_error("fail to create pipelinelayout");
 	}
 
-	void LightPointRenderSystem::createPipeline(VkRenderPass renderPass) {
+	void PointLightRenderSystem::createPipeline(VkRenderPass renderPass) {
 		assert(pipelineLayout != nullptr && "Cannot create pipeline before pupeline layout");
 
 		PipelineConfigInfo pipelineConfig{};
@@ -66,39 +66,29 @@ namespace ethereal {
 			pipelineConfig);
 	}
 
-	void LightPointRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo) {
+	void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo) {
 
 		auto rotateLight = glm::rotate(
 			glm::mat4{ 1.f }, frameInfo.frameTime, { 0.f, -1.f, 0.f });
 
 		int lightIndex = 0;
-		for (auto& kv : frameInfo.gameObjects) {
-			auto& obj = kv.second;
-			if (obj.lightPoint == nullptr) continue;
+		auto view = frameInfo.scene.getRegistry().view<TransformComponent, PointLightComponent>();
+		for (auto& entity : view) {
+			auto& transform = view.get<TransformComponent>(entity);
+			auto& pointLight = view.get<PointLightComponent>(entity);
 
 			assert(lightIndex < MAX_LIGHTS && "LIGHTS AMOUNT > MAX_LIGHTS");
-			//update position
-			obj.transform.translation = glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.f));
-
 			// copy point to ubo
-			ubo.lightPoints[lightIndex].position = glm::vec4(obj.transform.translation, 1.f);
-			ubo.lightPoints[lightIndex].color = glm::vec4(obj.color, obj.lightPoint->lightIntensity); 
+			ubo.lightPoints[lightIndex].position = glm::vec4(transform.translation, 1.f);
+			ubo.lightPoints[lightIndex].color = glm::vec4(pointLight.color, pointLight.lightIntensity);
 
 			lightIndex += 1;
 		}
 		ubo.numLights = lightIndex;
 	}
 
-	void LightPointRenderSystem::render(FrameInfo& frameInfo) {
-		std::map<float, EtherealGameObject::id_t> sorted;
-		for (auto& kv : frameInfo.gameObjects) {
-			auto& obj = kv.second;
-			if (obj.lightPoint == nullptr) continue;
-
-			auto offset = frameInfo.camera.getPosition() - obj.transform.translation;
-			float disSquared = glm::dot(offset, offset);
-			sorted[disSquared] = obj.getId();
-		}
+	void PointLightRenderSystem::render(FrameInfo& frameInfo) {
+		auto view = frameInfo.scene.getRegistry().view<TransformComponent, PointLightComponent>();
 		etherealPipeline->bind(frameInfo.commandBuffer);
 
 		vkCmdBindDescriptorSets(frameInfo.commandBuffer,
@@ -110,20 +100,20 @@ namespace ethereal {
 			0,
 			nullptr);
 		
-		for (auto it = sorted.rbegin(); it != sorted.rend(); it++) {
-			auto& obj = frameInfo.gameObjects.at(it->second);
-
-			LightPointPushConstants push{};
-			push.position = glm::vec4(obj.transform.translation, 1.f);
-			push.color = glm::vec4(obj.color, obj.lightPoint->lightIntensity);
-			push.radius = obj.transform.scale.x;
+		for (auto& entity : view) {
+			auto& transform = view.get<TransformComponent>(entity);
+			auto& pointLight = view.get<PointLightComponent>(entity);
+			PointLightPushConstants push{};
+			push.position = glm::vec4(transform.translation, 1.f);
+			push.color = glm::vec4(pointLight.color, pointLight.lightIntensity);
+			push.radius = transform.scale.x / 100;
 
 			vkCmdPushConstants(
 				frameInfo.commandBuffer,
 				pipelineLayout,
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 				0,
-				sizeof(LightPointPushConstants),
+				sizeof(PointLightPushConstants),
 				&push
 			);
 			vkCmdDraw(frameInfo.commandBuffer, 6, 1, 0, 0); 

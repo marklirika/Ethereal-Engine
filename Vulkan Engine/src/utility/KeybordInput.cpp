@@ -2,7 +2,7 @@
 
 namespace ethereal {
 	
-	void Keybord::moveInPlaneXZ(GLFWwindow* window, float dt, EtherealGameObject& gameObject) {
+	void CameraController::moveInPlaneXZ(GLFWwindow* window, float dt, EtherealGameObject& gameObject) {
 		
 		glm::vec3 rotate{ 0.f };
 		if (glfwGetKey(window, keys.lookLeft) == GLFW_PRESS) rotate.y += 1.f;

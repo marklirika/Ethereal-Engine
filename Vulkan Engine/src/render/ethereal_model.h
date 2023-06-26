@@ -41,23 +41,20 @@ namespace ethereal {
 		EtherealModel(const EtherealModel&) = delete;
 		EtherealModel& operator=(const EtherealModel&) = delete;
 
-
 		static std::unique_ptr<EtherealModel> createModelFromFile(EtherealDevice& device, const std::string& filepath);
 
-		void bind(VkCommandBuffer commandBuffer);
-		void draw(VkCommandBuffer commandBuffer);
-
-	private:
-		void createVertexBuffers(const std::vector<Vertex>& vertices);
-		void createIndexBuffers(const std::vector<uint32_t>& indices);
-		  
-		EtherealDevice& etherealDevice;
-
+		// attributes
 		std::unique_ptr<EtherealBuffer> vertexBuffer;
 		uint32_t vertexCount;
 
 		bool hasIndexBuffer = false;
 		std::unique_ptr<EtherealBuffer> indexBuffer;
 		uint32_t indexCount;
+
+	private:
+		void createVertexBuffers(const std::vector<Vertex>& vertices);
+		void createIndexBuffers(const std::vector<uint32_t>& indices);
+		  
+		EtherealDevice& etherealDevice;
 	};
 }
