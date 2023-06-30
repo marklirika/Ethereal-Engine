@@ -1,7 +1,6 @@
 #pragma once
-
-#include "../ECS/ethereal_game_obj.h"
-#include "../core/ethereal_window.h"
+#include "core/ethereal_window.h"
+#include "ECS/ethereal_entity.h"
 
 namespace ethereal {
 
@@ -20,7 +19,7 @@ namespace ethereal {
             int lookDown = GLFW_KEY_DOWN;
         };
 
-        void moveInPlaneXZ(GLFWwindow* window, float dt, EtherealGameObject& gameobject);
+        void moveInPlaneXZ(GLFWwindow* window, float dt, Entity& gameobject);
 
         KeyMappings keys{};
         float moveSpeed{ 3.f };

@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../render/ethereal_camera.h"
-#include "../ECS/ethereal_game_obj.h"
-#include "../ECS/scene.h"
+#include "render/ethereal_camera.h"
+#include "ECS/ethereal_scene.h"
 #include <vulkan/vulkan.h>
 
 namespace ethereal {
@@ -28,7 +27,6 @@ namespace ethereal {
 		VkCommandBuffer commandBuffer;
 		EtherealCamera& camera;
 		VkDescriptorSet globaDescriptorSet;
-		EtherealGameObject::Map& gameObjects;
 		Scene& scene;
 	};
 }

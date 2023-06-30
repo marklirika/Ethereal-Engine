@@ -1,5 +1,4 @@
 #pragma once
-
 #include "ethereal_window.h"
 
 // std lib headers

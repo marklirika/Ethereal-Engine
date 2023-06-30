@@ -1,6 +1,5 @@
 #pragma once
-
-#include "Scene.h"
+#include "ethereal_scene.h"
 #include "entt.h"
 
 namespace ethereal {

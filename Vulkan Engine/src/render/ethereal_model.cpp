@@ -1,8 +1,11 @@
 #include "ethereal_model.h"
-#include "../utility/utils.h"
+#include "utility/utils.h"
 
+//tinyobj
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tobjloader.h>
+
+//glm
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 

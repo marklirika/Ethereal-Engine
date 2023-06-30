@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../core/ethereal_device.h" 
-#include "../core/ethereal_swap_chain.h"
-#include "../core/ethereal_window.h"
+#include "core/ethereal_device.h" 
+#include "core/ethereal_swap_chain.h"
+#include "core/ethereal_window.h"
 
 //std
 #include <cassert>

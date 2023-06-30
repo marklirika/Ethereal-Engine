@@ -4,7 +4,6 @@
  * Initially based off VulkanBuffer by Sascha Willems -
  * https://github.com/SaschaWillems/Vulkan/blob/master/base/VulkanBuffer.h
  */
-
 #include "ethereal_buffer.h"
 
  // std

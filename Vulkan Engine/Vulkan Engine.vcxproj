@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Coding\Dependencies\Includes;C:\VulkanSDK\1.3.236.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Coding\Dependencies\Includes;C:\VulkanSDK\1.3.236.0\Include;Z:\Coding\_Projects\Custom\Vulkan Engine\Vulkan Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,7 +123,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Coding\Dependencies\Includes;C:\VulkanSDK\1.3.236.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Coding\Dependencies\Includes;C:\VulkanSDK\1.3.236.0\Include;Z:\Coding\_Projects\Custom\Vulkan Engine\Vulkan Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,10 +137,9 @@
   <ItemGroup>
     <ClCompile Include="src\ECS\components\transform.cpp" />
     <ClCompile Include="src\ECS\ethereal_entity.cpp" />
-    <ClCompile Include="src\ECS\scene.cpp" />
+    <ClCompile Include="src\ECS\ethereal_scene.cpp" />
     <ClCompile Include="src\memory\ethereal_buffer.cpp" />
-    <ClCompile Include="src\ECS\ethereal_game_obj.cpp" />
-    <ClCompile Include="src\ECS\render systems\ethereal_render_system.cpp" />
+    <ClCompile Include="src\ECS\systems\mesh_render_system.cpp" />
     <ClCompile Include="src\render\ethereal_renderer.cpp" />
     <ClCompile Include="src\core\ethereal_swap_chain.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -153,7 +152,7 @@
     <ClCompile Include="src\utility\KeybordInput.cpp" />
     <ClCompile Include="src\memory\ethereal_descriptor.cpp" />
     <ClCompile Include="src\utility\open_simplex_noise.cpp" />
-    <ClCompile Include="src\ECS\render systems\lightpoint_render_system.cpp" />
+    <ClCompile Include="src\ECS\systems\point_light_render_system..cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ECS\components\mesh.h" />
@@ -161,13 +160,12 @@
     <ClInclude Include="src\ECS\components\tag.h" />
     <ClInclude Include="src\ECS\components\transform.h" />
     <ClInclude Include="src\ECS\ethereal_entity.h" />
-    <ClInclude Include="src\ECS\components\components.h" />
-    <ClInclude Include="src\ECS\scene.h" />
+    <ClInclude Include="src\ECS\ethereal_components.h" />
+    <ClInclude Include="src\ECS\ethereal_scene.h" />
     <ClInclude Include="src\memory\ethereal_buffer.h" />
     <ClInclude Include="src\memory\ethereal_descriptors.h" />
     <ClInclude Include="src\memory\ethereal_frame_info.h" />
-    <ClInclude Include="src\ECS\render systems\ethereal_render_system.h" />
-    <ClInclude Include="src\ECS\ethereal_game_obj.h" />
+    <ClInclude Include="src\ECS\systems\mesh_render_system.h" />
     <ClInclude Include="src\render\ethereal_renderer.h" />
     <ClInclude Include="src\core\ethereal_swap_chain.h" />
     <ClInclude Include="src\core\ethereal_window.h" />
@@ -176,7 +174,7 @@
     <ClInclude Include="src\core\ethereal_device.h" />
     <ClInclude Include="src\render\ethereal_model.h" />
     <ClInclude Include="src\render\ethereal_camera.h" />
-    <ClInclude Include="src\ECS\render systems\lightpoint_render_system.h" />
+    <ClInclude Include="src\ECS\systems\point_light_render_system.h" />
     <ClInclude Include="src\utility\KeybordInput.h" />
     <ClInclude Include="src\utility\open_simplex_noise.h" />
     <ClInclude Include="src\resource.h" />
@@ -184,12 +182,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\compile.bat" />
-    <None Include="shaders\fragment_shader.frag" />
-    <None Include="shaders\fragment_shader.frag.spv" />
-    <None Include="shaders\lightpoint.frag" />
-    <None Include="shaders\lightpoint.vert" />
-    <None Include="shaders\vertex_shader.vert" />
-    <None Include="shaders\vertex_shader.vert.spv" />
+    <None Include="shaders\mesh.frag" />
+    <None Include="shaders\mesh.frag.spv" />
+    <None Include="shaders\point_light.frag" />
+    <None Include="shaders\point_light.vert" />
+    <None Include="shaders\mesh.vert" />
+    <None Include="shaders\mesh.vert.spv" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Vulkan Engine.rc" />

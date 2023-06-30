@@ -1,11 +1,5 @@
 #include "ethereal_pipeline.h"
-#include "../render/ethereal_model.h"
-
-//std
-#include <fstream>
-#include <stdexcept>
-#include <iostream>
-#include <cassert>
+#include "render/ethereal_model.h"
 
 namespace ethereal {
 

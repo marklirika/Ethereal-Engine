@@ -1,11 +1,10 @@
 #include "application.h"
+#include "ECS/systems/mesh_render_system.h"
+#include "ECS/systems/point_light_render_system.h"
+#include "memory/ethereal_buffer.h"
+#include "utility/KeybordInput.h"
 
-#include "../utility/KeybordInput.h"
-
-#include "../ECS/render systems/ethereal_render_system.h"
-#include "../ECS/render systems/lightpoint_render_system.h"
-#include "../memory/ethereal_buffer.h"
-
+//glm
 #define GLM_FORCE_RADIANCE
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
@@ -66,8 +65,9 @@ namespace ethereal {
         camera.setViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
 
 		//setting viewer
-        auto viewerObject = EtherealGameObject::createGameObject();
-		viewerObject.transform.translation.z = -2.5f;
+		auto viewerObject = scene.createEntity("viewerObject");
+		auto& viewerTransform = viewerObject.getComponent<TransformComponent>();;;
+		viewerTransform.translation.z = -2.5f;
 			
 		//setting camera controller
 		CameraController cameraController{};
@@ -84,18 +84,17 @@ namespace ethereal {
             startFrameTime = endFrameTime;
              
             cameraController.moveInPlaneXZ(etherealWindow.getGLFWwindow(), frameTime, viewerObject);
-            camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
+            camera.setViewYXZ(viewerTransform.translation, viewerTransform.rotation);
 
             float aspect = etherealRenderer.getAspectRation();
             //camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
-            camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
+            camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 1000.f);
 			
 			if (auto commandBuffer = etherealRenderer.beginFrame()) {
 				std::size_t size = scene.getRegistry().size();
-				std::cout << "Size of registry: " << size << std::endl;
 				int frameIndex = etherealRenderer.getFrameIndex();
 				FrameInfo frameInfo { 
-					frameIndex, frameTime, commandBuffer, camera, globalDescriptorSets[frameIndex],	gameObjects, scene	
+					frameIndex, frameTime, commandBuffer, camera, globalDescriptorSets[frameIndex], scene	
 				};
 
 				//update
@@ -123,14 +122,13 @@ namespace ethereal {
 	}
 
 	void Application::loadMeshes() {
-		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/smooth_vase.obj");
-		
-		auto flatVase = scene.createEntity("flatVase");
-		auto& flatVaseMesh = flatVase.addComponent<MeshComponent>(etherealModel);
-		//flatVaseMesh.model = etherealModel;
-		auto& flatVaseTransfrom = flatVase.getComponent<TransformComponent>();
-		flatVaseTransfrom.translation = { -.5f, .5f, 0.f };
-		flatVaseTransfrom.scale = { 3.f, 1.5f, 3.f };
+		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
+		auto frog = scene.createEntity("frog");
+		auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
+		auto& frogTransfrom = frog.getComponent<TransformComponent>();
+		frogTransfrom.translation = { 0.f, 0.f, 0.f };
+		frogTransfrom.scale = { 0.1f, 0.1f, 0.1f };
+		frogTransfrom.rotation += glm::radians(90.0f);
 
 		std::size_t size = scene.getRegistry().size();
 		std::cout << "Size of registry: " << size << std::endl;

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "ethereal_device.h"
 
 // vulkan headers

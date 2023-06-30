@@ -1,10 +1,13 @@
  #pragma once
-
 #include "ethereal_device.h"
 
 //std
 #include <string>
 #include <vector>
+#include <fstream>
+#include <stdexcept>
+#include <iostream>
+#include <cassert>
 
 namespace ethereal {
 

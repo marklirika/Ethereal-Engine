@@ -1,8 +1,9 @@
 #pragma once
-
+//GLFW
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+//std
 #include <stdexcept>
 #include <string>
 
