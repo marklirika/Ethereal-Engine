@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="Z:\Coding\_Projects\Custom\Vulkan Engine\build\CMakeFiles\b4e60a674f2869d7611710baabd9dd52\mesh.frag.spv.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Z:\Coding\_Projects\Custom\Vulkan Engine\build\CMakeFiles\b4e60a674f2869d7611710baabd9dd52\mesh.vert.spv.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Z:\Coding\_Projects\Custom\Vulkan Engine\build\CMakeFiles\b4e60a674f2869d7611710baabd9dd52\point_light.frag.spv.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Z:\Coding\_Projects\Custom\Vulkan Engine\build\CMakeFiles\b4e60a674f2869d7611710baabd9dd52\point_light.vert.spv.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Z:\Coding\_Projects\Custom\Vulkan Engine\build\CMakeFiles\4cf5ea86af974059ba58bd02943764d3\Shaders.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Z:\Coding\_Projects\Custom\Vulkan Engine\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Z:\Coding\_Projects\Custom\Vulkan Engine\build\CMakeFiles\Shaders" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{3B931969-E464-3067-B7F9-8AAF29D4C88F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

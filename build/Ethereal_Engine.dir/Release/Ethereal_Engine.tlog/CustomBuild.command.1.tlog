@@ -1,0 +1,10 @@
+^Z:\CODING\_PROJECTS\CUSTOM\VULKAN ENGINE\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SZ:/Coding/_Projects/Custom/Vulkan Engine" "-BZ:/Coding/_Projects/Custom/Vulkan Engine/build" --check-stamp-file "Z:/Coding/_Projects/Custom/Vulkan Engine/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

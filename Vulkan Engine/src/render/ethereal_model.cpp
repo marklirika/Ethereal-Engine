@@ -15,6 +15,11 @@
 #include <iostream>
 #include <unordered_map>
 
+
+#ifndef ENGINE_DIR
+#define ENGINE_DIR "../Vulkan Engine/"
+#endif
+
 namespace std {
 template<>
 struct hash<ethereal::EtherealModel::Vertex> {
@@ -37,7 +42,7 @@ namespace ethereal {
 
 	std::unique_ptr<EtherealModel> EtherealModel::createModelFromFile(EtherealDevice& device, const std::string& filepath) {
 		Builder builder{};
-		builder.loadModel(filepath);
+		builder.loadModel(ENGINE_DIR + filepath);
 
 		std::cout << "Vertex count: " << builder.vertices.size() << "\n";
 		return std::make_unique<EtherealModel>(device, builder);

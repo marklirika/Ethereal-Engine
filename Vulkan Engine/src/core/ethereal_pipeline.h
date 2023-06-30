@@ -9,6 +9,10 @@
 #include <iostream>
 #include <cassert>
 
+#ifndef ENGINE_DIR
+#define ENGINE_DIR "../Vulkan Engine/"
+#endif
+
 namespace ethereal {
 
 	struct PipelineConfigInfo {
