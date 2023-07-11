@@ -79,7 +79,7 @@ namespace ethereal {
 		}
 	}
 
-	void MeshRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
+	void MeshRenderSystem::renderMesh(FrameInfo& frameInfo) {
 		etherealPipeline->bind(frameInfo.commandBuffer);
 
 		vkCmdBindDescriptorSets(frameInfo.commandBuffer,

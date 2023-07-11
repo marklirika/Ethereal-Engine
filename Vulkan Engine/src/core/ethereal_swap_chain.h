@@ -22,6 +22,7 @@ namespace ethereal {
         EtherealSwapChain(const EtherealSwapChain&) = delete;
         EtherealSwapChain& operator=(const EtherealSwapChain&) = delete;
 
+        //getters
         VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
         VkRenderPass getRenderPass() { return renderPass; }
         VkImageView getImageView(int index) { return swapChainImageViews[index]; }
@@ -34,6 +35,7 @@ namespace ethereal {
         float extentAspectRatio() {
             return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
         }
+        
         VkFormat findDepthFormat();
 
         VkResult acquireNextImage(uint32_t* imageIndex);
@@ -84,5 +86,4 @@ namespace ethereal {
         std::vector<VkFence> imagesInFlight;
         size_t currentFrame = 0;
     };
-
 }

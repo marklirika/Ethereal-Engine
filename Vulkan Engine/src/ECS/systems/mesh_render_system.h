@@ -24,7 +24,7 @@ namespace ethereal {
 		void bind(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer);
 		void draw(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer);
 
-		void renderGameObjects(FrameInfo &frameInfo);
+		void renderMesh(FrameInfo &frameInfo);
 
 	private:
 		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);	

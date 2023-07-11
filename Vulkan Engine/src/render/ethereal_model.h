@@ -33,6 +33,13 @@ namespace ethereal {
 			std::vector<uint32_t> indices{};
 
 			void loadModel(const std::string& filepath);
+
+			/*
+				WARNING - SHIT FUNCTION !!!!!!!
+				VERY !!!!!!!!!!!!!!!!!!!!!!!!!!
+				VERY! !!!!!!!!!!!!!!!!!!!!!!!!
+			*/ 
+			void init(std::vector<EtherealModel::Vertex> verticies, std::vector<uint32_t> indicies);
 		};
 
 		EtherealModel(EtherealDevice& device, const Builder& builder);
@@ -40,8 +47,15 @@ namespace ethereal {
 
 		EtherealModel(const EtherealModel&) = delete;
 		EtherealModel& operator=(const EtherealModel&) = delete;
-
+		
 		static std::unique_ptr<EtherealModel> createModelFromFile(EtherealDevice& device, const std::string& filepath);
+
+		/*
+			WARNING - SHIT FUNCTION !!!!!!!
+			VERY !!!!!!!!!!!!!!!!!!!!!!!!!!
+			VERY !!!!!!!!!!!!!!!!!!!!!!!!!!
+		*/ 
+		static std::unique_ptr<EtherealModel> createModel(EtherealDevice& device, std::vector<Vertex> verticies, std::vector<uint32_t> indicies);
 
 		// attributes
 		std::unique_ptr<EtherealBuffer> vertexBuffer;

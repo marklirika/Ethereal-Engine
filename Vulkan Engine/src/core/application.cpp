@@ -12,11 +12,13 @@
 
 //std
 #include <chrono>
-#include <stdexcept>;
+#include <stdexcept>
 #include <array>
 #include <string>
 #include <iostream>
 #include <memory>
+
+#include "Frog's Empire/terrain/terrain.h"
 
 namespace ethereal {
 
@@ -108,7 +110,7 @@ namespace ethereal {
 
 				//render
 				etherealRenderer.beginSwapChainRenderPass(commandBuffer);
-                etherealRenderSystem.renderGameObjects(frameInfo);
+                etherealRenderSystem.renderMesh(frameInfo);
 				lightPointRenderSystem.render(frameInfo);
 				etherealRenderer.endSwapChainRenderPass(commandBuffer);
 				etherealRenderer.endFrame();
@@ -122,16 +124,21 @@ namespace ethereal {
 	}
 
 	void Application::loadMeshes() {
+		//terrain
+		std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
+		auto terrain = scene.createEntity("terrain");
+		auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
+		auto& terrainTransform = terrain.getComponent<TransformComponent>();
+		terrainTransform.scale = { 0.01f, 0.01f, 0.01f };
+		terrainTransform.rotation += glm::radians(90.0f);
+		//frog + light below
 		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
 		auto frog = scene.createEntity("frog");
 		auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
 		auto& frogTransfrom = frog.getComponent<TransformComponent>();
 		frogTransfrom.translation = { 0.f, 0.f, 0.f };
-		frogTransfrom.scale = { 0.1f, 0.1f, 0.1f };
+		frogTransfrom.scale = { 0.01f, 0.01f, 0.01f };
 		frogTransfrom.rotation += glm::radians(90.0f);
-
-		std::size_t size = scene.getRegistry().size();
-		std::cout << "Size of registry: " << size << std::endl;
 
 		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},
@@ -142,16 +149,24 @@ namespace ethereal {
 			{1.f, 1.f, 1.f} 
 		};
 
-		for (int i = 0; i < lightColors.size(); i++) {
-			const std::string name = "point light " + std::to_string(i);
-			auto pointLightEntity = scene.createEntity(name);
-			auto& pointLight = pointLightEntity.addComponent<PointLightComponent>(1.f, lightColors[i]);
-			auto rotateLight = glm::rotate(
-				glm::mat4{ 1.f },
-				(i * glm::two_pi<float>()) / lightColors.size(), 
-				{ 0.f, -1.f, 0.f });
+		//for (int i = 0; i < lightColors.size(); i++) {
+		//	const std::string name = "point light " + std::to_string(i);
+		//	auto pointLightEntity = scene.createEntity(name);
+		//	auto& pointLight = pointLightEntity.addComponent<PointLightComponent>(1.f, lightColors[i]);
+		//	auto rotateLight = glm::rotate(
+		//		glm::mat4{ 1.f },
+		//		(i * glm::two_pi<float>()) / lightColors.size(), 
+		//		{ 0.f, -1.f, 0.f });
 
-			pointLightEntity.getComponent<TransformComponent>().translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
-		}
+		//	pointLightEntity.getComponent<TransformComponent>().translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+		//}
+		auto sun = scene.createEntity("Sun");
+		sun.addComponent<PointLightComponent>(100000.f, glm::vec3(1.f, 0.f, 0.f));
+		sun.getComponent<TransformComponent>().translation = { 500.f, -1000.f, 0.f };
+		auto sun_2 = scene.createEntity("Sun2");
+		sun_2.addComponent<PointLightComponent>(100000.f, glm::vec3(0.f, 0.f, 1.f));
+		sun_2.getComponent<TransformComponent>().translation = { -500.f, -1000.f, 0.f };
+		std::size_t size = scene.getRegistry().size();
+		std::cout << "Size of registry: " << size << std::endl;
 	}
 }

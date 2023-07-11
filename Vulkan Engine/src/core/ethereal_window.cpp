@@ -21,7 +21,7 @@ namespace ethereal {
 		glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 	}
 
-	void EtherealWindow::createWindowSurface(VkInstance instance, VkSurfaceKHR * surface) {
+	void EtherealWindow::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) {
 		if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create window surface");
 		}

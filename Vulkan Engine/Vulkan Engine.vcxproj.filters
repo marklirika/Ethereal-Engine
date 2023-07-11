@@ -75,6 +75,12 @@
     <ClCompile Include="src\ECS\systems\point_light_render_system..cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Frog%27s Empire\terrain\terrain.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ethereal_texture.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\ethereal_window.h">
@@ -147,6 +153,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\ECS\components\mesh.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frog%27s Empire\terrain\terrain.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\ethereal_texture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

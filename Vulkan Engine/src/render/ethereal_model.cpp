@@ -48,6 +48,13 @@ namespace ethereal {
 		return std::make_unique<EtherealModel>(device, builder);
 	}
 
+	std::unique_ptr<EtherealModel> EtherealModel::createModel(EtherealDevice& device, std::vector<Vertex> verticies, std::vector<uint32_t> indicies) {
+		Builder builder{};
+		builder.init(verticies, indicies);
+		std::cout << "Vertex count: " << builder.vertices.size() << "\n";
+		return std::make_unique<EtherealModel>(device, builder);
+	}
+
 	void EtherealModel::createVertexBuffers(const std::vector<Vertex>& vertices) {
 		vertexCount = static_cast<uint32_t>(vertices.size());
 		assert(vertexCount >= 3 && "Vertex Count has to be at least 3");
@@ -116,6 +123,7 @@ namespace ethereal {
 		bindingDescription[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		return bindingDescription;
 	}
+
 	std::vector<VkVertexInputAttributeDescription> EtherealModel::Vertex::getAttributeDescriptions() {
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
@@ -126,6 +134,11 @@ namespace ethereal {
 		attributeDescriptions.push_back({ 3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv) });
 
 		return attributeDescriptions;
+	}
+
+	void EtherealModel::Builder::init(std::vector<EtherealModel::Vertex> verticies, std::vector<uint32_t> indicies) {
+		vertices = verticies;
+		indices = indicies;
 	}
 
 	void EtherealModel::Builder::loadModel(const std::string& filepath) {
