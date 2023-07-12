@@ -45,16 +45,10 @@
     <ClCompile Include="src\render\ethereal_renderer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\render systems\ethereal_render_system.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\ethereal_camera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\utility\KeybordInput.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ECS\ethereal_game_obj.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\memory\ethereal_buffer.cpp">
@@ -66,10 +60,25 @@
     <ClCompile Include="src\utility\open_simplex_noise.cpp">
       <Filter>Open Simplex Noise</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\render systems\lightpoint_render_system.cpp">
+    <ClCompile Include="src\ECS\ethereal_scene.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="src\ECS\ethereal_entity.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\components\transform.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\systems\mesh_render_system.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\systems\point_light_render_system..cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frog%27s Empire\terrain\terrain.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ethereal_texture.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,13 +104,7 @@
     <ClInclude Include="src\resource.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\ethereal_game_obj.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\render\ethereal_renderer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\render systems\ethereal_render_system.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\render\ethereal_camera.h">
@@ -125,10 +128,37 @@
     <ClInclude Include="src\utility\open_simplex_noise.h">
       <Filter>Open Simplex Noise</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\render systems\lightpoint_render_system.h">
+    <ClInclude Include="src\ECS\ethereal_scene.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="src\ECS\ethereal_components.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\ethereal_entity.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\components\lightpoint.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\components\transform.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\components\tag.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\systems\mesh_render_system.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\systems\point_light_render_system.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\components\mesh.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frog%27s Empire\terrain\terrain.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\ethereal_texture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
@@ -136,22 +166,22 @@
     <None Include="shaders\compile.bat">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\fragment_shader.frag">
+    <None Include="shaders\mesh.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\fragment_shader.frag.spv">
+    <None Include="shaders\mesh.frag.spv">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\vertex_shader.vert">
+    <None Include="shaders\mesh.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\vertex_shader.vert.spv">
+    <None Include="shaders\mesh.vert.spv">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\lightpoint.vert">
+    <None Include="shaders\point_light.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\lightpoint.frag">
+    <None Include="shaders\point_light.frag">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

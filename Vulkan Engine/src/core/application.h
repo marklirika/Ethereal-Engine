@@ -1,11 +1,13 @@
 #pragma once
 
 #include "ethereal_device.h" 
-#include "../render/ethereal_renderer.h"
+#include "render/ethereal_renderer.h"
 #include "ethereal_window.h"
-#include "../render/ethereal_camera.h"
-#include "../ECS/ethereal_game_obj.h"
-#include "../memory/ethereal_descriptors.h"
+#include "render/ethereal_camera.h"
+#include "ECS/ethereal_scene.h"
+#include "ECS/ethereal_entity.h"
+#include "ECS/ethereal_components.h"
+#include "memory/ethereal_descriptors.h"
 
 //std
 #include <memory>
@@ -27,21 +29,14 @@ namespace ethereal {
 
 		void run();
 
-		void sierpinski(
-			std::vector<EtherealModel::Vertex>& vertices,
-			int depth,
-			glm::vec2 left,
-			glm::vec2 right,
-			glm::vec2 top);
-
 	private:
-		void loadGameObjects();
-
 		EtherealWindow etherealWindow{ WIDTH, HEIGHT, "Ethereal Vulkan Engine" };
 		EtherealDevice etherealDevice{ etherealWindow };
 		EtherealRenderer etherealRenderer{ etherealWindow, etherealDevice };
 
 		std::unique_ptr<EtherealDescriptorPool> globalPool{};
-		EtherealGameObject::Map gameObjects;
+
+		void loadMeshes();
+		Scene scene;
 	};
 }

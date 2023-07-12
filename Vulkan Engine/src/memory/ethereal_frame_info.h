@@ -1,14 +1,13 @@
 #pragma once
 
-#include "../render/ethereal_camera.h"
-#include "../ECS/ethereal_game_obj.h"
-
+#include "render/ethereal_camera.h"
+#include "ECS/ethereal_scene.h"
 #include <vulkan/vulkan.h>
 
 namespace ethereal {
 	constexpr int MAX_LIGHTS = 10;
 
-	struct LightPoint {
+	struct PointLight {
 		glm::vec4 position{};  // w = 1.0
 		glm::vec4 color{}; // w = intensity
 	};
@@ -18,7 +17,7 @@ namespace ethereal {
 		glm::mat4 view{ 1.f };
 		glm::mat4 inverseView{ 1.f };
 		glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, .02f };
-		LightPoint lightPoints[MAX_LIGHTS];
+		PointLight lightPoints[MAX_LIGHTS];
 		int numLights;
 	};
 
@@ -28,6 +27,6 @@ namespace ethereal {
 		VkCommandBuffer commandBuffer;
 		EtherealCamera& camera;
 		VkDescriptorSet globaDescriptorSet;
-		EtherealGameObject::Map& gameObjects;
+		Scene& scene;
 	};
 }

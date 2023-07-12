@@ -1,8 +1,8 @@
 #pragma once
+#include "core/ethereal_device.h"
+#include "memory/ethereal_buffer.h"
 
-#include "../core/ethereal_device.h"
-#include "../memory/ethereal_buffer.h"
-
+//glm
 #define GLM_FORCE_RADIANCE
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
@@ -33,6 +33,13 @@ namespace ethereal {
 			std::vector<uint32_t> indices{};
 
 			void loadModel(const std::string& filepath);
+
+			/*
+				WARNING - SHIT FUNCTION !!!!!!!
+				VERY !!!!!!!!!!!!!!!!!!!!!!!!!!
+				VERY! !!!!!!!!!!!!!!!!!!!!!!!!
+			*/ 
+			void init(std::vector<EtherealModel::Vertex> verticies, std::vector<uint32_t> indicies);
 		};
 
 		EtherealModel(EtherealDevice& device, const Builder& builder);
@@ -40,24 +47,28 @@ namespace ethereal {
 
 		EtherealModel(const EtherealModel&) = delete;
 		EtherealModel& operator=(const EtherealModel&) = delete;
-
-
+		
 		static std::unique_ptr<EtherealModel> createModelFromFile(EtherealDevice& device, const std::string& filepath);
 
-		void bind(VkCommandBuffer commandBuffer);
-		void draw(VkCommandBuffer commandBuffer);
+		/*
+			WARNING - SHIT FUNCTION !!!!!!!
+			VERY !!!!!!!!!!!!!!!!!!!!!!!!!!
+			VERY !!!!!!!!!!!!!!!!!!!!!!!!!!
+		*/ 
+		static std::unique_ptr<EtherealModel> createModel(EtherealDevice& device, std::vector<Vertex> verticies, std::vector<uint32_t> indicies);
 
-	private:
-		void createVertexBuffers(const std::vector<Vertex>& vertices);
-		void createIndexBuffers(const std::vector<uint32_t>& indices);
-		  
-		EtherealDevice& etherealDevice;
-
+		// attributes
 		std::unique_ptr<EtherealBuffer> vertexBuffer;
 		uint32_t vertexCount;
 
 		bool hasIndexBuffer = false;
 		std::unique_ptr<EtherealBuffer> indexBuffer;
 		uint32_t indexCount;
+
+	private:
+		void createVertexBuffers(const std::vector<Vertex>& vertices);
+		void createIndexBuffers(const std::vector<uint32_t>& indices);
+		  
+		EtherealDevice& etherealDevice;
 	};
 }

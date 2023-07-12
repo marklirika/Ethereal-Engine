@@ -1,5 +1,4 @@
 #pragma once
-
 #include "ethereal_window.h"
 
 // std lib headers
@@ -39,7 +38,9 @@ class EtherealDevice {
   EtherealDevice(EtherealDevice &&) = delete;
   EtherealDevice &operator=(EtherealDevice &&) = delete;
 
+  //getters
   VkCommandPool getCommandPool() { return commandPool; }
+  VkPhysicalDevice getPhysicalDevice() { return physicalDevice; }
   VkDevice device() { return device_; }
   VkSurfaceKHR surface() { return surface_; }
   VkQueue graphicsQueue() { return graphicsQueue_; }
@@ -105,4 +106,4 @@ class EtherealDevice {
   const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 };
 
-}  // namespace lve
+}  // namespace ethereal

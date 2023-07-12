@@ -1,8 +1,11 @@
 #include "ethereal_model.h"
-#include "../utility/utils.h"
+#include "utility/utils.h"
 
+//tinyobj
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tobjloader.h>
+
+//glm
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
@@ -11,6 +14,11 @@
 #include <cstring>
 #include <iostream>
 #include <unordered_map>
+
+
+#ifndef ENGINE_DIR
+#define ENGINE_DIR "../Vulkan Engine/"
+#endif
 
 namespace std {
 template<>
@@ -34,8 +42,15 @@ namespace ethereal {
 
 	std::unique_ptr<EtherealModel> EtherealModel::createModelFromFile(EtherealDevice& device, const std::string& filepath) {
 		Builder builder{};
-		builder.loadModel(filepath);
+		builder.loadModel(ENGINE_DIR + filepath);
 
+		std::cout << "Vertex count: " << builder.vertices.size() << "\n";
+		return std::make_unique<EtherealModel>(device, builder);
+	}
+
+	std::unique_ptr<EtherealModel> EtherealModel::createModel(EtherealDevice& device, std::vector<Vertex> verticies, std::vector<uint32_t> indicies) {
+		Builder builder{};
+		builder.init(verticies, indicies);
 		std::cout << "Vertex count: " << builder.vertices.size() << "\n";
 		return std::make_unique<EtherealModel>(device, builder);
 	}
@@ -101,24 +116,6 @@ namespace ethereal {
 
 	}
 
-	void EtherealModel::bind(VkCommandBuffer commandBuffer) {
-		VkBuffer buffers[] = { vertexBuffer->getBuffer()};
-		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-		if (hasIndexBuffer) {
-			vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
-		}
-	}
-
-	void EtherealModel::draw(VkCommandBuffer commandBuffer) {
-		if (hasIndexBuffer) {
-			vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
-		}
-		else {
-			vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
-		}
-	}
-
 	std::vector<VkVertexInputBindingDescription> EtherealModel::Vertex::getBindingDescriptions() {
 		std::vector<VkVertexInputBindingDescription> bindingDescription(1);
 		bindingDescription[0].binding = 0;
@@ -126,6 +123,7 @@ namespace ethereal {
 		bindingDescription[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		return bindingDescription;
 	}
+
 	std::vector<VkVertexInputAttributeDescription> EtherealModel::Vertex::getAttributeDescriptions() {
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
@@ -136,6 +134,11 @@ namespace ethereal {
 		attributeDescriptions.push_back({ 3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv) });
 
 		return attributeDescriptions;
+	}
+
+	void EtherealModel::Builder::init(std::vector<EtherealModel::Vertex> verticies, std::vector<uint32_t> indicies) {
+		vertices = verticies;
+		indices = indicies;
 	}
 
 	void EtherealModel::Builder::loadModel(const std::string& filepath) {

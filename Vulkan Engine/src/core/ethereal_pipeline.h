@@ -1,10 +1,17 @@
  #pragma once
-
 #include "ethereal_device.h"
 
 //std
 #include <string>
 #include <vector>
+#include <fstream>
+#include <stdexcept>
+#include <iostream>
+#include <cassert>
+
+#ifndef ENGINE_DIR
+#define ENGINE_DIR "../Vulkan Engine/"
+#endif
 
 namespace ethereal {
 

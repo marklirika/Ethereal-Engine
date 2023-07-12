@@ -1,12 +1,12 @@
-/**
+#pragma once
+
+/*
   Open Simple Noise for C++
   Port to C++ from https://gist.github.com/KdotJPG/b1270127455a94ac5d19
   by Rickard Lundberg, 2019.
 */
-#pragma once
 
 #include <cstdint>
-
 #include <array>
 namespace OpenSimplexNoise
 {

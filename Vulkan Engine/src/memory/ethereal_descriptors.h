@@ -1,8 +1,5 @@
 #pragma once
-
-#pragma once
-
-#include "../core/ethereal_device.h"
+#include "core/ethereal_device.h"
 
 // std
 #include <memory>
