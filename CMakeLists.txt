@@ -38,7 +38,7 @@ if (DEFINED GLFW_PATH)
   message(STATUS "Using GLFW path specified in .env")
   set(GLFW_INCLUDE_DIRS "${GLFW_PATH}/include")
   if (MSVC)
-    set(GLFW_LIB "${GLFW_PATH}/lib") # 2.1 Update lib-vc2019 to use same version as your visual studio, can be an issue with glfw.lib naming
+    set(GLFW_LIB "${GLFW_PATH}/lib-vc2022") # 2.1 Update lib-vc2019 to use same version as your visual studio, can be an issue with glfw.lib naming
   elseif (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
     message(STATUS "USING MINGW")
     set(GLFW_LIB "${GLFW_PATH}/lib-mingw-w64") # 2.1 make sure matches glfw mingw subdirectory
@@ -101,7 +101,6 @@ if (WIN32)
     ${Vulkan_LIBRARIES}
     ${GLFW_LIB}
   )
- 
   target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1)
 elseif (UNIX)
     message(STATUS "CREATING BUILD FOR UNIX")
@@ -109,7 +108,7 @@ elseif (UNIX)
       ${PROJECT_SOURCE_DIR}/Vulkan Engine/src
       ${TINYOBJ_PATH}
     )
-    target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} glfw3 ${Vulkan_LIBRARIES})
 endif()
  
  

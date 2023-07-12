@@ -1,15 +1,14 @@
-#include "ethereal_texture.h"
-#include "memory/ethereal_buffer.h"
-
-#include <vulkan/vulkan_core.h>
 #define STB_IMAGE_IMPLEMENTATION
-#include "../../external/stb/stb_image.h"
+#include <vulkan/vulkan_core.h>
+#include "ethereal_texture.h"
 #include <stdexcept>
+#include "memory/ethereal_buffer.h"
+#include "../../external/stb/stb_image.h"
+#include "core/ethereal_device.h"
 #include <cmath>
-#include <cstdint>
-namespace ethereal {
 
-	Texture::Texture(EtherealDevice& device, const std::string& filepath) : etherealDevice{ device } {
+namespace ethereal {
+    Texture::Texture(EtherealDevice& device, const std::string& filepath) : etherealDevice{ device } {
         int channels;
         int m_BytesPerPixel;
 

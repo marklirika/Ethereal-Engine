@@ -3,7 +3,6 @@
 #include "core/ethereal_device.h"
 
 #include <string.h>
-
 namespace ethereal {
     class Texture {
     public:
@@ -22,9 +21,7 @@ namespace ethereal {
         void transitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout);
         void generateMipmaps();
 
-        int width;
-        int height;
-        int mipLevels;
+        int width, height, mipLevels;
 
         EtherealDevice& etherealDevice;
         VkImage image;

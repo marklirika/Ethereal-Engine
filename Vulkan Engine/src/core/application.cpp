@@ -3,6 +3,7 @@
 #include "ECS/systems/point_light_render_system.h"
 #include "memory/ethereal_buffer.h"
 #include "utility/KeybordInput.h"
+#include "render/ethereal_texture.h"
 
 //glm
 #define GLM_FORCE_RADIANCE
@@ -51,11 +52,22 @@ namespace ethereal {
 			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
 			.build(); 
 
+		////texture init
+		//std::unique_ptr<Texture> texture{};		
+		//texture = std::make_unique<Texture>(etherealDevice, "../textures/meme.png");
+
+		//VkDescriptorImageInfo imageInfo = {};
+		//imageInfo.sampler = texture->getSampler();
+		//imageInfo.imageView = texture->getImageView();
+		//imageInfo.imageLayout = texture->getImageLayout();
+		//
 		//setting descriptors global sets
 		std::vector<VkDescriptorSet> globalDescriptorSets(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < globalDescriptorSets.size(); i++) {
 			auto bufferInfo = uboBuffers[i]->descriptorInfo();
-			EtherealDescriptorWriter(*globalSetLayout, *globalPool).writeBuffer(0, &bufferInfo).build(globalDescriptorSets[i]);
+			EtherealDescriptorWriter(*globalSetLayout, *globalPool)
+				.writeBuffer(0, &bufferInfo)
+				.build(globalDescriptorSets[i]);
 		}
 
 		//setting render systems
@@ -124,13 +136,15 @@ namespace ethereal {
 	}
 
 	void Application::loadMeshes() {
-		//terrain
-		std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
-		auto terrain = scene.createEntity("terrain");
-		auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
-		auto& terrainTransform = terrain.getComponent<TransformComponent>();
-		terrainTransform.scale = { 0.01f, 0.01f, 0.01f };
-		terrainTransform.rotation += glm::radians(90.0f);
+
+		////terrain
+		//std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
+		//auto terrain = scene.createEntity("terrain");
+		//auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
+		//auto& terrainTransform = terrain.getComponent<TransformComponent>();
+		//terrainTransform.scale = { 0.01f, 0.01f, 0.01f };
+		//terrainTransform.rotation += glm::radians(90.0f);
+
 		//frog + light below
 		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
 		auto frog = scene.createEntity("frog");
@@ -163,9 +177,7 @@ namespace ethereal {
 		auto sun = scene.createEntity("Sun");
 		sun.addComponent<PointLightComponent>(100000.f, glm::vec3(1.f, 0.f, 0.f));
 		sun.getComponent<TransformComponent>().translation = { 500.f, -1000.f, 0.f };
-		auto sun_2 = scene.createEntity("Sun2");
-		sun_2.addComponent<PointLightComponent>(100000.f, glm::vec3(0.f, 0.f, 1.f));
-		sun_2.getComponent<TransformComponent>().translation = { -500.f, -1000.f, 0.f };
+
 		std::size_t size = scene.getRegistry().size();
 		std::cout << "Size of registry: " << size << std::endl;
 	}

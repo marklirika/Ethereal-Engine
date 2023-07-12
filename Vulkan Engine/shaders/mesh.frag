@@ -6,7 +6,6 @@ layout(location = 2) in vec3 fragNormalWorld;
 
 layout(location = 0) out vec4 outColor;
 
-
 struct LightPoint{
     vec4 position;
     vec4 color;
