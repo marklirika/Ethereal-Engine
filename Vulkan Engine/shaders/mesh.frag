@@ -3,10 +3,11 @@
 layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec3 fragPositionWorld;
 layout(location = 2) in vec3 fragNormalWorld; 
+layout(location = 3) in vec2 fragUV;
 
 layout(location = 0) out vec4 outColor;
 
-struct LightPoint{
+struct PointLight {
     vec4 position;
     vec4 color;
 };
@@ -16,9 +17,11 @@ layout(set = 0, binding = 0) uniform GlobalUbo {
     mat4 view;
     mat4 inverseView;
     vec4 ambientLightColor; // w is intensity
-    LightPoint lightPoints[10];
+    PointLight lightPoints[10];
     int numLights;
 } ubo;
+
+layout(set = 0, binding = 1) uniform sampler2D image;
 
 layout(push_constant) uniform Push {
     mat4 modelMatrix;
@@ -32,8 +35,9 @@ void main() {
 
     vec3 cameraPositionWorld = ubo.inverseView[3].xyz;
     vec3 viewDirection = normalize(cameraPositionWorld - fragPositionWorld);
+
     for (int i = 0; i < ubo.numLights; i++) {
-        LightPoint light = ubo.lightPoints[i];
+        PointLight light = ubo.lightPoints[i];
         vec3 directionToLight = light.position.xyz - fragPositionWorld;
         float attenuation = 1.0 / dot(directionToLight, directionToLight);
         directionToLight = normalize(directionToLight);
@@ -49,5 +53,7 @@ void main() {
         specularLight += intensity * blinnTerm;
     }
 
-    outColor = vec4((diffuseLight * fragColor + specularLight), 1.0);
+    vec3 imageColor = texture(image, fragUV).rgb;
+
+    outColor = vec4((diffuseLight * imageColor + specularLight * imageColor), 1.0);
 }

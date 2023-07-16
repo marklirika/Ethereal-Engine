@@ -8,7 +8,7 @@
 
 int main() {
 
-	ethereal::Application app{};	
+	ethereal::Application app{};
 	try {
 		app.run();
 	}

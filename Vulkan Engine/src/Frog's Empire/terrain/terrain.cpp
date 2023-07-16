@@ -1,5 +1,5 @@
 #include "terrain.h"
-
+#include <iostream>
 namespace Frogs_Empire {
 
 	std::vector<ethereal::Entity> Terrain::generateObjects() {
@@ -8,7 +8,7 @@ namespace Frogs_Empire {
 		return objects;
 	}
 
-	std::unique_ptr<ethereal::EtherealModel> Terrain::generateTerrain(ethereal::EtherealDevice& device, glm::vec2 map_size, glm::vec2 unit_size) {
+    std::unique_ptr<ethereal::EtherealModel> Terrain::generateTerrain(ethereal::EtherealDevice& device, glm::vec2 map_size, glm::vec2 unit_size) {
         using namespace ethereal;
         std::vector<EtherealModel::Vertex> vertices;
         std::vector<uint32_t> indices;
@@ -17,6 +17,7 @@ namespace Frogs_Empire {
         int numVerticesY = map_size.y / unit_size.y;
         int numTrianglesX = numVerticesX - 1;
         int numTrianglesY = numVerticesY - 1;
+        OpenSimplexNoise::Noise noise(199);
 
         // Generate vertices
         float yoffset = 0;
@@ -25,10 +26,23 @@ namespace Frogs_Empire {
             for (int x = 0; x < numVerticesX; x++) {
                 float xPos = x * unit_size.x;
                 float yPos = y * unit_size.y;
-                OpenSimplexNoise::Noise noise(199);
-                double zPos = glm::mix(0, 100, noise.eval(xoffset, -yoffset));
-                if(zPos < 0) zPos = 0;
-                vertices.push_back({ glm::vec3(xPos, yPos, zPos), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f) });
+                float zPos = glm::mix(0, 100, noise.eval(xoffset, -yoffset));
+                if (zPos < 0) zPos = 0;
+
+                // Вычисление нормали
+                glm::vec3 normal(0.0f);
+                if (x > 0 && x < numVerticesX - 1 && y > 0 && y < numVerticesY - 1) {
+                    glm::vec3 left = glm::vec3(xPos - unit_size.x, yPos, noise.eval(xoffset - 0.01f, -yoffset));
+                    glm::vec3 right = glm::vec3(xPos + unit_size.x, yPos, noise.eval(xoffset + 0.01f, -yoffset));
+                    glm::vec3 up = glm::vec3(xPos, yPos - unit_size.y, noise.eval(xoffset, -(yoffset - 0.01f)));
+                    glm::vec3 down = glm::vec3(xPos, yPos + unit_size.y, noise.eval(xoffset, -(yoffset + 0.01f)));
+
+                    glm::vec3 normal1 = glm::normalize(glm::cross(up - glm::vec3(xPos, yPos, zPos), left - glm::vec3(xPos, yPos, zPos)));
+                    glm::vec3 normal2 = glm::normalize(glm::cross(right - glm::vec3(xPos, yPos, zPos), down - glm::vec3(xPos, yPos, zPos)));
+
+                    normal = glm::normalize(normal1 + normal2);
+                }
+                vertices.push_back({ glm::vec3(xPos, yPos, zPos), glm::vec3(1.0f, 1.0f, 0.0f), {normal.x, normal.y, 0.7f} });
                 xoffset += 0.01f;
             }
             yoffset += 0.01f;
@@ -54,6 +68,6 @@ namespace Frogs_Empire {
 
         // Generate terrain
         return EtherealModel::createModel(device, vertices, indices);
-	}
+    }
 
 } // namespace ethereal

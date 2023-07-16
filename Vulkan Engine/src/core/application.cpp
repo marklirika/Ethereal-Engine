@@ -4,7 +4,7 @@
 #include "memory/ethereal_buffer.h"
 #include "utility/KeybordInput.h"
 #include "render/ethereal_texture.h"
-
+#include "utility/utils.h"
 //glm
 #define GLM_FORCE_RADIANCE
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -20,6 +20,7 @@
 #include <memory>
 
 #include "Frog's Empire/terrain/terrain.h"
+#include "Frog's Empire/unit_gen/unit_gen_system.h"
 
 namespace ethereal {
 
@@ -29,6 +30,7 @@ namespace ethereal {
 			EtherealDescriptorPool::Builder(etherealDevice)
 			.setMaxSets(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
+			.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.build();
 		loadMeshes();
 	}
@@ -36,6 +38,7 @@ namespace ethereal {
 	Application::~Application() {}
 
 	void Application::run() {
+		//setting descriptors global sets
 		std::vector<std::unique_ptr<EtherealBuffer>> uboBuffers(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < uboBuffers.size(); i++) {
 			uboBuffers[i] = std::make_unique<EtherealBuffer>(
@@ -50,30 +53,33 @@ namespace ethereal {
 		//setting descriptors global set layout
 		auto globalSetLayout = EtherealDescriptorSetLayout::Builder(etherealDevice)
 			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
+			.addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
 			.build(); 
 
-		////texture init
-		//std::unique_ptr<Texture> texture{};		
-		//texture = std::make_unique<Texture>(etherealDevice, "../textures/meme.png");
+		//texture init
+		std::unique_ptr<Texture> texture{};		
+		texture = std::make_unique<Texture>(etherealDevice, "textures/carbon.jpg");
 
-		//VkDescriptorImageInfo imageInfo = {};
-		//imageInfo.sampler = texture->getSampler();
-		//imageInfo.imageView = texture->getImageView();
-		//imageInfo.imageLayout = texture->getImageLayout();
-		//
+		VkDescriptorImageInfo imageInfo = {};
+		imageInfo.sampler = texture->getSampler();
+		imageInfo.imageView = texture->getImageView();
+		imageInfo.imageLayout = texture->getImageLayout();
+		
 		//setting descriptors global sets
 		std::vector<VkDescriptorSet> globalDescriptorSets(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < globalDescriptorSets.size(); i++) {
 			auto bufferInfo = uboBuffers[i]->descriptorInfo();
 			EtherealDescriptorWriter(*globalSetLayout, *globalPool)
 				.writeBuffer(0, &bufferInfo)
+				.writeImage(1, &imageInfo)
 				.build(globalDescriptorSets[i]);
 		}
 
-		//setting render systems
+		//setting systems
 		MeshRenderSystem etherealRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
 		PointLightRenderSystem lightPointRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
-        
+		UnitGenSystem unitGenSystem{ etherealDevice };
+
 		//setting camera
 		EtherealCamera camera{};
         camera.setViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
@@ -86,22 +92,22 @@ namespace ethereal {
 		//setting camera controller
 		CameraController cameraController{};
 
-		//setting frame time
-        auto startFrameTime = std::chrono::high_resolution_clock::now();
+		//setting timer for calculation of frame time
+		eHelp::timer timer;
+		timer.start();
 
 		//Main Loop
 		while (!etherealWindow.shouldClose()) {
 			glfwPollEvents();
 
             auto endFrameTime = std::chrono::high_resolution_clock::now();
-            float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(startFrameTime - endFrameTime).count();
-            startFrameTime = endFrameTime;
+			float frameTime = timer.dt();
+			timer.reset();
              
             cameraController.moveInPlaneXZ(etherealWindow.getGLFWwindow(), frameTime, viewerObject);
             camera.setViewYXZ(viewerTransform.translation, viewerTransform.rotation);
 
             float aspect = etherealRenderer.getAspectRation();
-            //camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
             camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 1000.f);
 			
 			if (auto commandBuffer = etherealRenderer.beginFrame()) {
@@ -119,6 +125,7 @@ namespace ethereal {
 				lightPointRenderSystem.update(frameInfo, ubo);
 				uboBuffers[frameIndex]->writeToBuffer(&ubo);
 				uboBuffers[frameIndex]->flush();
+				unitGenSystem.generate(frameInfo);
 
 				//render
 				etherealRenderer.beginSwapChainRenderPass(commandBuffer);
@@ -137,13 +144,18 @@ namespace ethereal {
 
 	void Application::loadMeshes() {
 
-		////terrain
-		//std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
-		//auto terrain = scene.createEntity("terrain");
-		//auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
-		//auto& terrainTransform = terrain.getComponent<TransformComponent>();
-		//terrainTransform.scale = { 0.01f, 0.01f, 0.01f };
-		//terrainTransform.rotation += glm::radians(90.0f);
+		auto barak_obama = scene.createEntity("barak_obama");
+		auto& unitGen = barak_obama.addComponent<UnitGenComponent>();
+		unitGen.isActive = true;
+
+		//terrain
+		std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
+		auto terrain = scene.createEntity("terrain");
+		auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
+		auto& terrainTransform = terrain.getComponent<TransformComponent>();
+		terrainTransform.scale = { 0.5f,0.5f,0.5f };
+		terrainTransform.translation = { -100.f, 0.f, -100.f };
+		terrainTransform.rotation += glm::radians(90.0f);
 
 		//frog + light below
 		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
@@ -151,7 +163,7 @@ namespace ethereal {
 		auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
 		auto& frogTransfrom = frog.getComponent<TransformComponent>();
 		frogTransfrom.translation = { 0.f, 0.f, 0.f };
-		frogTransfrom.scale = { 0.01f, 0.01f, 0.01f };
+		frogTransfrom.scale = { 1, 1, 1 };
 		frogTransfrom.rotation += glm::radians(90.0f);
 
 		std::vector<glm::vec3> lightColors {
@@ -163,20 +175,20 @@ namespace ethereal {
 			{1.f, 1.f, 1.f} 
 		};
 
-		//for (int i = 0; i < lightColors.size(); i++) {
-		//	const std::string name = "point light " + std::to_string(i);
-		//	auto pointLightEntity = scene.createEntity(name);
-		//	auto& pointLight = pointLightEntity.addComponent<PointLightComponent>(1.f, lightColors[i]);
-		//	auto rotateLight = glm::rotate(
-		//		glm::mat4{ 1.f },
-		//		(i * glm::two_pi<float>()) / lightColors.size(), 
-		//		{ 0.f, -1.f, 0.f });
+		for (int i = 0; i < lightColors.size(); i++) {
+			const std::string name = "point light " + std::to_string(i);
+			auto pointLightEntity = scene.createEntity(name);
+			auto& pointLight = pointLightEntity.addComponent<PointLightComponent>(1.f, lightColors[i]);
+			auto rotateLight = glm::rotate(
+				glm::mat4{ 1.f },
+				(i * glm::two_pi<float>()) / lightColors.size(), 
+				{ 0.f, -1.f, 0.f });
 
-		//	pointLightEntity.getComponent<TransformComponent>().translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
-		//}
+			pointLightEntity.getComponent<TransformComponent>().translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+		}
 		auto sun = scene.createEntity("Sun");
-		sun.addComponent<PointLightComponent>(100000.f, glm::vec3(1.f, 0.f, 0.f));
-		sun.getComponent<TransformComponent>().translation = { 500.f, -1000.f, 0.f };
+		sun.addComponent<PointLightComponent>(500000000.f, glm::vec3(1.f, 1.f, 1.f));
+		sun.getComponent<TransformComponent>().translation = { 0.f, -5000.f, 0.f };
 
 		std::size_t size = scene.getRegistry().size();
 		std::cout << "Size of registry: " << size << std::endl;
