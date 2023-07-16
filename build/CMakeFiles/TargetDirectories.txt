@@ -1,4 +1,0 @@
-Z:/Coding/_Projects/Custom/Vulkan Engine/build/CMakeFiles/Ethereal_Engine.dir
-Z:/Coding/_Projects/Custom/Vulkan Engine/build/CMakeFiles/Shaders.dir
-Z:/Coding/_Projects/Custom/Vulkan Engine/build/CMakeFiles/edit_cache.dir
-Z:/Coding/_Projects/Custom/Vulkan Engine/build/CMakeFiles/rebuild_cache.dir

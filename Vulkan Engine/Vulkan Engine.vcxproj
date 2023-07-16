@@ -139,6 +139,7 @@
     <ClCompile Include="src\ECS\ethereal_entity.cpp" />
     <ClCompile Include="src\ECS\ethereal_scene.cpp" />
     <ClCompile Include="src\Frog%27s Empire\terrain\terrain.cpp" />
+    <ClCompile Include="src\Frog%27s Empire\unit_gen\unit_gen_system.cpp" />
     <ClCompile Include="src\memory\ethereal_buffer.cpp" />
     <ClCompile Include="src\ECS\systems\mesh_render_system.cpp" />
     <ClCompile Include="src\render\ethereal_renderer.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="src\memory\ethereal_descriptor.cpp" />
     <ClCompile Include="src\utility\open_simplex_noise.cpp" />
     <ClCompile Include="src\ECS\systems\point_light_render_system..cpp" />
+    <ClCompile Include="src\utility\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ECS\components\mesh.h" />
@@ -165,6 +167,8 @@
     <ClInclude Include="src\ECS\ethereal_components.h" />
     <ClInclude Include="src\ECS\ethereal_scene.h" />
     <ClInclude Include="src\Frog%27s Empire\terrain\terrain.h" />
+    <ClInclude Include="src\Frog%27s Empire\unit_gen\unit_gen_system.h" />
+    <ClInclude Include="src\Frog%27s Empire\unit_gen\unit_gen_component.h" />
     <ClInclude Include="src\memory\ethereal_buffer.h" />
     <ClInclude Include="src\memory\ethereal_descriptors.h" />
     <ClInclude Include="src\memory\ethereal_frame_info.h" />

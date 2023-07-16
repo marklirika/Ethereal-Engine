@@ -25,7 +25,7 @@ template<>
 struct hash<ethereal::EtherealModel::Vertex> {
 	size_t operator()(ethereal::EtherealModel::Vertex const& vertex) const {
 		size_t seed = 0;
-		ethereal::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
+		eHelp::hash_combine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
 		return seed;
 	} 
 };

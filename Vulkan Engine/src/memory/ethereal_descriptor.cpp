@@ -172,7 +172,7 @@ namespace ethereal {
         write.descriptorType = bindingDescription.descriptorType;
         write.dstBinding = binding;
         write.pImageInfo = imageInfo;
-        write.descriptorCount = 1;
+        write.descriptorCount = 1; //***************
 
         writes.push_back(write);
         return *this;

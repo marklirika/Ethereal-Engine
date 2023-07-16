@@ -1,5 +1,6 @@
 .vs
+.vscode
 x64
 Vulkan Engine.sln
-.vscode
 build
+mingwBuild.bat
