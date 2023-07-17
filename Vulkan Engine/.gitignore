@@ -1,0 +1,24 @@
+.vs/
+cmakefiles/
+Ethereal_Engine.dir/
+Release/
+x64/
+ALL_BUILD.vcxproj
+ALL_BUILD.vcxproj.filters
+ALL_BUILD.vcxproj.user
+cmake_install.cmake
+CMakeCache.txt
+Ethereal_Engine.sln
+Ethereal_Engine.vcxproj
+Ethereal Engine.vcxproj.filters
+Ethereal_Engine.vcxproj.user
+Shaders.vcxproj
+Shaders.vcxproj.filters
+Vulkan Engine.aps
+Vulkan Engine.rc
+Vulkan Engine.vcxproj 
+Vulkan Engine.vcxproj.filters
+Vulkan Engine.vcxproj.user
+ZERO_CHECK.vcxproj
+ZERO_CHECK.vcxproj.filters
+

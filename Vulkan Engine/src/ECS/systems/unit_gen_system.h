@@ -1,5 +1,5 @@
 #pragma once
-#include "unit_gen_component.h"
+#include "ECS/ethereal_components.h"
 #include "core/ethereal_device.h"
 
 namespace ethereal {

@@ -6,7 +6,13 @@
 #include "ECS/ethereal_components.h"
 
 struct UnitGenComponent {
-	float finishTime = std::chrono::seconds(10).count();
+	float finishTime = std::chrono::seconds(5).count();
 	float processTime;
-	bool isActive;
+	
+	//queue
+	int queue;
+	int limit;
+
+	//spawn position
+	glm::vec3 spawnPoint {};
 };

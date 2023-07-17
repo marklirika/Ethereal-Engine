@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\ECS\components\transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\ECS\ethereal_entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\ECS\ethereal_scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\ECS\systems\mesh_render_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\ECS\systems\point_light_render_system..cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\Frog's Empire\terrain\terrain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\systems\unit_gen_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\core\application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\core\ethereal_device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\core\ethereal_pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\core\ethereal_swap_chain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\core\ethereal_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\memory\ethereal_buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\memory\ethereal_descriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\render\ethereal_camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\render\ethereal_model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\render\ethereal_renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\render\ethereal_texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\utility\KeybordInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\utility\open_simplex_noise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\utility\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\dev\EtherealEngine\Ethereal-Engine\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7FD4742A-28A5-352B-A1B8-B445DDE884F2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

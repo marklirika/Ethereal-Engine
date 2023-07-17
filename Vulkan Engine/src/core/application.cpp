@@ -20,7 +20,7 @@
 #include <memory>
 
 #include "Frog's Empire/terrain/terrain.h"
-#include "Frog's Empire/unit_gen/unit_gen_system.h"
+#include "ECS/systems/unit_gen_system.h"
 
 namespace ethereal {
 
@@ -143,10 +143,14 @@ namespace ethereal {
 	}
 
 	void Application::loadMeshes() {
+		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/cube.obj");		
 
 		auto barak_obama = scene.createEntity("barak_obama");
+		auto& mesh = barak_obama.addComponent<MeshComponent>(etherealModel);
 		auto& unitGen = barak_obama.addComponent<UnitGenComponent>();
-		unitGen.isActive = true;
+		unitGen.limit = 5;
+		unitGen.queue = 3;
+		unitGen.spawnPoint = { -10, -10, 0 };
 
 		//terrain
 		std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
@@ -158,13 +162,13 @@ namespace ethereal {
 		terrainTransform.rotation += glm::radians(90.0f);
 
 		//frog + light below
-		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
-		auto frog = scene.createEntity("frog");
-		auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
-		auto& frogTransfrom = frog.getComponent<TransformComponent>();
-		frogTransfrom.translation = { 0.f, 0.f, 0.f };
-		frogTransfrom.scale = { 1, 1, 1 };
-		frogTransfrom.rotation += glm::radians(90.0f);
+		//std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
+		//auto frog = scene.createEntity("frog");
+		//auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
+		//auto& frogTransfrom = frog.getComponent<TransformComponent>();
+		//frogTransfrom.translation = { 0.f, 0.f, 0.f };
+		//frogTransfrom.scale = { 1, 1, 1 };
+		//frogTransfrom.rotation += glm::radians(90.0f);
 
 		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},
