@@ -13,6 +13,9 @@
 #include <memory>
 #include <vector>
 
+//movement 
+#include "ECS/components/movement_component.h"
+
 namespace ethereal {
 
 	class Application {

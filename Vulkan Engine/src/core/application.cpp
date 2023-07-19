@@ -22,6 +22,10 @@
 #include "Frog's Empire/terrain/terrain.h"
 #include "ECS/systems/unit_gen_system.h"
 
+//movement
+#include "ECS/systems/movement_system.h"
+
+
 namespace ethereal {
 
 	Application::Application() {
@@ -79,6 +83,7 @@ namespace ethereal {
 		MeshRenderSystem etherealRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
 		PointLightRenderSystem lightPointRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
 		UnitGenSystem unitGenSystem{ etherealDevice };
+		MovementSystem movementSystem{}; //movement
 
 		//setting camera
 		EtherealCamera camera{};
@@ -98,6 +103,9 @@ namespace ethereal {
 
 		//Main Loop
 		while (!etherealWindow.shouldClose()) {
+			eHelp::timer loopdt;
+			loopdt.start();
+			
 			glfwPollEvents();
 
             auto endFrameTime = std::chrono::high_resolution_clock::now();
@@ -126,6 +134,8 @@ namespace ethereal {
 				uboBuffers[frameIndex]->writeToBuffer(&ubo);
 				uboBuffers[frameIndex]->flush();
 				unitGenSystem.generate(frameInfo);
+				movementSystem.move(frameInfo); //movement
+
 
 				//render
 				etherealRenderer.beginSwapChainRenderPass(commandBuffer);
@@ -134,6 +144,8 @@ namespace ethereal {
 				etherealRenderer.endSwapChainRenderPass(commandBuffer);
 				etherealRenderer.endFrame();
 			}
+			loopdt.dt();
+			std::cout << loopdt.delta_time  << "\n";
 		}
 
 		auto result = vkDeviceWaitIdle(etherealDevice.device());
@@ -143,14 +155,18 @@ namespace ethereal {
 	}
 
 	void Application::loadMeshes() {
-		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/cube.obj");		
+		std::shared_ptr<EtherealModel> barakModel = EtherealModel::createModelFromFile(etherealDevice, "models/cube.obj");		
 
 		auto barak_obama = scene.createEntity("barak_obama");
-		auto& mesh = barak_obama.addComponent<MeshComponent>(etherealModel);
+		auto& mesh = barak_obama.addComponent<MeshComponent>(barakModel);
 		auto& unitGen = barak_obama.addComponent<UnitGenComponent>();
+		auto& barakT = barak_obama.getComponent<TransformComponent>();
+		barakT.translation = { 0, 0 , 10 };
+		barakT.scale = { 2, 2, 2 };
 		unitGen.limit = 5;
-		unitGen.queue = 3;
-		unitGen.spawnPoint = { -10, -10, 0 };
+		unitGen.queue = 1;
+		unitGen.spawnPoint = { barakT.translation.x - 10, barakT.translation.y, barakT.translation.z };
+		unitGen.destinationPoint = { -100, 0, -100 };
 
 		//terrain
 		std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
@@ -162,13 +178,16 @@ namespace ethereal {
 		terrainTransform.rotation += glm::radians(90.0f);
 
 		//frog + light below
-		//std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
-		//auto frog = scene.createEntity("frog");
-		//auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
-		//auto& frogTransfrom = frog.getComponent<TransformComponent>();
-		//frogTransfrom.translation = { 0.f, 0.f, 0.f };
-		//frogTransfrom.scale = { 1, 1, 1 };
-		//frogTransfrom.rotation += glm::radians(90.0f);
+		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
+		auto frog = scene.createEntity("frog");
+		auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
+		auto& frogTransfrom = frog.getComponent<TransformComponent>();
+		auto& frogMovement = frog.addComponent<MovementComponent>();
+		frogTransfrom.translation = { 0.f, 0.f, 0.f };
+		frogTransfrom.scale = { 1, 1, 1 };
+		frogTransfrom.rotation += glm::radians(90.0f);
+		frogMovement.speed = 10;
+		frogMovement.destination = {-100, 0, -100};
 
 		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},

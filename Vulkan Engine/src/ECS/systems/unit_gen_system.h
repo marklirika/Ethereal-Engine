@@ -1,6 +1,7 @@
 #pragma once
 #include "ECS/ethereal_components.h"
 #include "core/ethereal_device.h"
+#include "ECS/components/movement_component.h"
 
 namespace ethereal {
 

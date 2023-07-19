@@ -16,10 +16,10 @@
     <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\ECS\systems\point_light_render_system..cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\Frog's Empire\terrain\terrain.cpp">
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\ECS\systems\unit_gen_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ECS\systems\unit_gen_system.cpp">
+    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\Frog's Empire\terrain\terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\core\application.cpp">
@@ -67,6 +67,8 @@
     <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\utility\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Frog%27s Empire\units\ai_system.cpp" />
+    <ClCompile Include="src\ECS\systems\movement_system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\dev\EtherealEngine\Ethereal-Engine\CMakeLists.txt" />
@@ -75,5 +77,11 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{7FD4742A-28A5-352B-A1B8-B445DDE884F2}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Frog%27s Empire\units\unit_component.h" />
+    <ClInclude Include="src\Frog%27s Empire\units\ai_system.h" />
+    <ClInclude Include="src\ECS\components\movement_component.h" />
+    <ClInclude Include="src\ECS\systems\movement_system.h" />
   </ItemGroup>
 </Project>
