@@ -28,6 +28,7 @@ namespace ethereal {
 					auto& newUnitMovement = newUnit.addComponent<MovementComponent>();
 					newUnitMovement.destination = unitGen.destinationPoint;
 					newUnitMovement.speed = 1;
+					newUnitMovement.isMoving = true;
 			
 
 					offset -= 3;

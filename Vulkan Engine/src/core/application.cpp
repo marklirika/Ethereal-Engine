@@ -188,6 +188,7 @@ namespace ethereal {
 		frogTransfrom.rotation += glm::radians(90.0f);
 		frogMovement.speed = 1;
 		frogMovement.destination = {-1, 0, -1};
+		frogMovement.isMoving = true;
 
 		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},
