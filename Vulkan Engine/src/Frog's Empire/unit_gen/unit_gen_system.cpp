@@ -6,7 +6,6 @@ namespace ethereal {
 	UnitGenSystem::UnitGenSystem(EtherealDevice& device) : etherealDevice(device) { 
 		offset = 0;
 		etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");
-
 	}
 
 	void UnitGenSystem::generate(FrameInfo& info) {
@@ -20,9 +19,11 @@ namespace ethereal {
 				unitGen.processTime = 0;
 				Entity newUnit = info.scene.createEntity("unit");
 				newUnit.addComponent<MeshComponent>(etherealModel);
-
-				newUnit.getComponent<TransformComponent>().translation = { 0.f + offset , 0.f, 0.f };
-				offset += 10;
+				auto& newUnitTransform = newUnit.getComponent<TransformComponent>();
+				newUnitTransform.scale = { 0.3f, 0.3f, 0.3f };
+				newUnitTransform.translation = { 0.f + offset , 0.f, 0.f };
+				newUnitTransform.rotation += glm::radians(90.0f);
+				offset -= 3;
 			}
 		}
 	}

@@ -8,4 +8,4 @@ namespace ethereal {
 		std::shared_ptr<EtherealModel> model;
 	};
 
-}
+} // namespace ethereal

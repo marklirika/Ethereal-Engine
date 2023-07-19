@@ -1,10 +1,14 @@
 #include "application.h"
+
 #include "ECS/systems/mesh_render_system.h"
 #include "ECS/systems/point_light_render_system.h"
+#include "ECS/systems/audio_system.h"
+
 #include "memory/ethereal_buffer.h"
-#include "utility/KeybordInput.h"
 #include "render/ethereal_texture.h"
+#include "utility/KeybordInput.h"
 #include "utility/utils.h"
+
 //glm
 #define GLM_FORCE_RADIANCE
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -32,13 +36,13 @@ namespace ethereal {
 			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.build();
-		loadMeshes();
+		loadEntities();
 	}
 
 	Application::~Application() {}
 
 	void Application::run() {
-		//setting descriptors global sets
+		//creating ubo buffers
 		std::vector<std::unique_ptr<EtherealBuffer>> uboBuffers(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < uboBuffers.size(); i++) {
 			uboBuffers[i] = std::make_unique<EtherealBuffer>(
@@ -58,7 +62,7 @@ namespace ethereal {
 
 		//texture init
 		std::unique_ptr<Texture> texture{};		
-		texture = std::make_unique<Texture>(etherealDevice, "textures/carbon.jpg");
+		texture = std::make_unique<Texture>(etherealDevice, "textures/zhabka.jpg");
 
 		VkDescriptorImageInfo imageInfo = {};
 		imageInfo.sampler = texture->getSampler();
@@ -126,7 +130,7 @@ namespace ethereal {
 				uboBuffers[frameIndex]->writeToBuffer(&ubo);
 				uboBuffers[frameIndex]->flush();
 				unitGenSystem.generate(frameInfo);
-
+				AudioSystem::update(frameInfo);
 				//render
 				etherealRenderer.beginSwapChainRenderPass(commandBuffer);
                 etherealRenderSystem.renderMesh(frameInfo);
@@ -142,14 +146,23 @@ namespace ethereal {
 		}
 	}
 
-	void Application::loadMeshes() {
-
+	void Application::loadEntities() {
+		
+		//sound system
+		auto musicPlayer = scene.createEntity("music_player");
+		auto& audio = musicPlayer.addComponent<AudioComponent>();
+		audio.type = AudioComponent::AudioType::MUSIC_TRACK;
+		AudioSystem::init();
+		AudioSystem::load(audio, "audio/music/boat.mp3");
+		AudioSystem::play(audio);
+		//barak_obama
 		auto barak_obama = scene.createEntity("barak_obama");
 		auto& unitGen = barak_obama.addComponent<UnitGenComponent>();
 		unitGen.isActive = true;
 
 		//terrain
-		std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
+		std::shared_ptr<EtherealModel> terrainModel = 
+			Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
 		auto terrain = scene.createEntity("terrain");
 		auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
 		auto& terrainTransform = terrain.getComponent<TransformComponent>();
@@ -158,13 +171,13 @@ namespace ethereal {
 		terrainTransform.rotation += glm::radians(90.0f);
 
 		//frog + light below
-		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
-		auto frog = scene.createEntity("frog");
-		auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
-		auto& frogTransfrom = frog.getComponent<TransformComponent>();
-		frogTransfrom.translation = { 0.f, 0.f, 0.f };
-		frogTransfrom.scale = { 1, 1, 1 };
-		frogTransfrom.rotation += glm::radians(90.0f);
+		//std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
+		//auto frog = scene.createEntity("frog");
+		//auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
+		//auto& frogTransfrom = frog.getComponent<TransformComponent>();
+		//frogTransfrom.translation = { 0.f, 0.f, 0.f };
+		//frogTransfrom.scale = { 1, 1, 1 };
+		//frogTransfrom.rotation += glm::radians(90.0f);
 
 		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},
@@ -186,8 +199,9 @@ namespace ethereal {
 
 			pointLightEntity.getComponent<TransformComponent>().translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
 		}
+
 		auto sun = scene.createEntity("Sun");
-		sun.addComponent<PointLightComponent>(500000000.f, glm::vec3(1.f, 1.f, 1.f));
+		sun.addComponent<PointLightComponent>(50000000.f, glm::vec3(1.f, 1.f, 1.f));
 		sun.getComponent<TransformComponent>().translation = { 0.f, -5000.f, 0.f };
 
 		std::size_t size = scene.getRegistry().size();

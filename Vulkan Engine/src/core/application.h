@@ -36,7 +36,7 @@ namespace ethereal {
 
 		std::unique_ptr<EtherealDescriptorPool> globalPool{};
 
-		void loadMeshes();
+		void loadEntities();
 		Scene scene;
 	};
 }

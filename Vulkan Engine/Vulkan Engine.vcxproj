@@ -105,13 +105,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Coding\Dependencies\Includes;C:\VulkanSDK\1.3.236.0\Include;Z:\Coding\_Projects\Custom\Vulkan Engine\Vulkan Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Coding\Dependencies\Includes;C:\VulkanSDK\1.3.236.0\Include;Z:\Coding\_Projects\Custom\Vulkan Engine\Vulkan Engine\src;Z:\Coding\Dependencies\Libraries\FMOD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.3.236.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.3.236.0\Lib;Z:\Coding\Dependencies\Libraries\FMOD\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -123,21 +123,24 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Coding\Dependencies\Includes;C:\VulkanSDK\1.3.236.0\Include;Z:\Coding\_Projects\Custom\Vulkan Engine\Vulkan Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Coding\Dependencies\Includes;C:\VulkanSDK\1.3.236.0\Include;Z:\Coding\_Projects\Custom\Vulkan Engine\Vulkan Engine\src;Z:\Coding\Dependencies\Libraries\FMOD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.3.236.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.3.236.0\Lib;Z:\Coding\Dependencies\Libraries\FMOD\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ECS\systems\audio_system.cpp" />
     <ClCompile Include="src\ECS\components\transform.cpp" />
     <ClCompile Include="src\ECS\ethereal_entity.cpp" />
     <ClCompile Include="src\ECS\ethereal_scene.cpp" />
+    <ClCompile Include="src\ECS\systems\collision_system.cpp" />
+    <ClCompile Include="src\ECS\components\collision.cpp" />
     <ClCompile Include="src\Frog%27s Empire\terrain\terrain.cpp" />
     <ClCompile Include="src\Frog%27s Empire\unit_gen\unit_gen_system.cpp" />
     <ClCompile Include="src\memory\ethereal_buffer.cpp" />
@@ -159,13 +162,17 @@
     <ClCompile Include="src\utility\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ECS\components\collision.h" />
+    <ClInclude Include="src\ECS\systems\audio_system.h" />
     <ClInclude Include="src\ECS\components\mesh.h" />
-    <ClInclude Include="src\ECS\components\lightpoint.h" />
+    <ClInclude Include="src\ECS\components\pointlight.h" />
     <ClInclude Include="src\ECS\components\tag.h" />
     <ClInclude Include="src\ECS\components\transform.h" />
     <ClInclude Include="src\ECS\ethereal_entity.h" />
     <ClInclude Include="src\ECS\ethereal_components.h" />
     <ClInclude Include="src\ECS\ethereal_scene.h" />
+    <ClInclude Include="src\ECS\components\audio_component.h" />
+    <ClInclude Include="src\ECS\systems\collision_system.h" />
     <ClInclude Include="src\Frog%27s Empire\terrain\terrain.h" />
     <ClInclude Include="src\Frog%27s Empire\unit_gen\unit_gen_system.h" />
     <ClInclude Include="src\Frog%27s Empire\unit_gen\unit_gen_component.h" />
