@@ -161,12 +161,12 @@ namespace ethereal {
 		auto& mesh = barak_obama.addComponent<MeshComponent>(barakModel);
 		auto& unitGen = barak_obama.addComponent<UnitGenComponent>();
 		auto& barakT = barak_obama.getComponent<TransformComponent>();
-		barakT.translation = { 0, 0 , 10 };
+		barakT.translation = { 0, 0 , 0 };
 		barakT.scale = { 2, 2, 2 };
 		unitGen.limit = 5;
 		unitGen.queue = 1;
 		unitGen.spawnPoint = { barakT.translation.x - 10, barakT.translation.y, barakT.translation.z };
-		unitGen.destinationPoint = { -100, 0, -100 };
+		unitGen.destinationPoint = { -1, 0, -1 };
 
 		//terrain
 		std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
@@ -186,8 +186,8 @@ namespace ethereal {
 		frogTransfrom.translation = { 0.f, 0.f, 0.f };
 		frogTransfrom.scale = { 1, 1, 1 };
 		frogTransfrom.rotation += glm::radians(90.0f);
-		frogMovement.speed = 10;
-		frogMovement.destination = {-100, 0, -100};
+		frogMovement.speed = 1;
+		frogMovement.destination = {-1, 0, -1};
 
 		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},
