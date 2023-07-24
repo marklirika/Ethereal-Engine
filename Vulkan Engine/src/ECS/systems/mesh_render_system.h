@@ -2,8 +2,9 @@
 #include "ECS/ethereal_components.h"
 #include "core/ethereal_device.h" 
 #include "core/ethereal_pipeline.h"
-#include "render/ethereal_camera.h"
+#include "memory/ethereal_descriptors.h"
 #include "memory/ethereal_frame_info.h"
+#include "render/ethereal_camera.h"
 #include "render/ethereal_model.h"
 
 //std
@@ -21,7 +22,10 @@ namespace ethereal {
 		MeshRenderSystem(const MeshRenderSystem&) = delete;
 		MeshRenderSystem& operator=(const MeshRenderSystem&) = delete;
 
-		void bind(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer);
+		void bind(std::shared_ptr<EtherealModel> model, 
+			std::shared_ptr<EtherealTexture> texture, 
+			FrameInfo& frameInfo);
+
 		void draw(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer);
 
 		void renderMesh(FrameInfo &frameInfo);

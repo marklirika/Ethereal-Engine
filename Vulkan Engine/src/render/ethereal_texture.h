@@ -1,34 +1,40 @@
 #pragma once
 #include <vulkan/vulkan_core.h>
 #include "core/ethereal_device.h"
-
+#include "core/ethereal_swap_chain.h"
+#include "memory/ethereal_descriptors.h"
 #include <string.h>
 namespace ethereal {
-    class Texture {
+    class EtherealTexture {
     public:
-        Texture(EtherealDevice& device, const std::string& filepath);
-        ~Texture();
+        EtherealTexture(EtherealDevice& device, const std::string& filepath);
+        ~EtherealTexture();
 
-        Texture(const Texture&) = delete;
-        Texture& operator=(const Texture&) = delete;
-        Texture(Texture&&) = delete;
-        Texture& operator=(Texture&&) = delete;
-
+        EtherealTexture(const EtherealTexture&) = delete;
+        EtherealTexture& operator=(const EtherealTexture&) = delete;
+        
         VkSampler getSampler() { return sampler; }
         VkImageView getImageView() { return imageView; }
         VkImageLayout getImageLayout() { return imageLayout; }
+
+        std::vector<VkDescriptorSet> getDescriptorSets() { return descriptorSets; }
     private:
+        void writeDescriptors();
         void transitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout);
         void generateMipmaps();
 
         int width, height, mipLevels;
-
-        EtherealDevice& etherealDevice;
         VkImage image;
-        VkDeviceMemory imageMemory;
         VkImageView imageView;
         VkSampler sampler;
         VkFormat imageFormat;
         VkImageLayout imageLayout;
+
+        std::unique_ptr<EtherealDescriptorPool> descriptorPool;
+        std::unique_ptr<EtherealDescriptorSetLayout> descriptorSetLayout;
+        std::vector<VkDescriptorSet> descriptorSets { EtherealSwapChain::MAX_FRAMES_IN_FLIGHT };
+        
+        VkDeviceMemory imageMemory;
+        EtherealDevice& etherealDevice;
     };
 }

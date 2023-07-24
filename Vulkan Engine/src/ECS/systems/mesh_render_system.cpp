@@ -28,14 +28,16 @@ namespace ethereal {
 	}
 
 	void MeshRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
-
 		VkPushConstantRange pushConstantRange{};
 		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		pushConstantRange.offset = 0;
 		pushConstantRange.size = sizeof(SimplePushConstantData);
 
-		std::vector<VkDescriptorSetLayout> descriptorSetLayouts { globalSetLayout };
+		std::unique_ptr<EtherealDescriptorSetLayout> imageLayout = EtherealDescriptorSetLayout::Builder(etherealDevice)
+			.addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+			.build();
 
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts { globalSetLayout, imageLayout->getDescriptorSetLayout() };
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
@@ -61,13 +63,24 @@ namespace ethereal {
 			pipelineConfig);
 	}
 
-	void MeshRenderSystem::bind(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer) {
+	void MeshRenderSystem::bind(std::shared_ptr<EtherealModel> model, 
+		std::shared_ptr<EtherealTexture> texture, 
+		FrameInfo& frameInfo) {
 		VkBuffer buffers[] = { model->vertexBuffer->getBuffer() };
 		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+		vkCmdBindVertexBuffers(frameInfo.commandBuffer, 0, 1, buffers, offsets);
 		if (model->hasIndexBuffer) {
-			vkCmdBindIndexBuffer(commandBuffer, model->indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+			vkCmdBindIndexBuffer(frameInfo.commandBuffer, model->indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 		}
+
+		vkCmdBindDescriptorSets(frameInfo.commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			pipelineLayout,
+			1,
+			1,
+			&texture->getDescriptorSets()[frameInfo.frameIndex],
+			0,
+			nullptr);
 	}
 
 	void MeshRenderSystem::draw(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer) {
@@ -91,9 +104,10 @@ namespace ethereal {
 			0,
 			nullptr);
 
-		auto view = frameInfo.scene.getRegistry().view<MeshComponent,TransformComponent>();
+		auto view = frameInfo.scene.getRegistry().view<MeshComponent, TextureComponent, TransformComponent>();
 		for (auto entity : view) {
 			auto& mesh = view.get<MeshComponent>(entity);
+			auto& texture = view.get<TextureComponent>(entity);
 			auto& transform = view.get<TransformComponent>(entity);
 			SimplePushConstantData push{};
 			push.modelMatrix = transform.mat4();
@@ -106,7 +120,7 @@ namespace ethereal {
 				sizeof(SimplePushConstantData),
 				&push);
 
-			bind(mesh.model, frameInfo.commandBuffer);
+			bind(mesh.model, texture.texture, frameInfo);
 			draw(mesh.model, frameInfo.commandBuffer);
 		}
 	}

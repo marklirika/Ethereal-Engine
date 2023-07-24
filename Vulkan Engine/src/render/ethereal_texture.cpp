@@ -1,14 +1,17 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include <vulkan/vulkan_core.h>
 #include "ethereal_texture.h"
-#include <stdexcept>
 #include "memory/ethereal_buffer.h"
-#include "../../external/stb/stb_image.h"
 #include "core/ethereal_device.h"
+#include "core/ethereal_swap_chain.h"
+
+#include <vulkan/vulkan_core.h>
+#include "../../external/stb/stb_image.h"
+
+#include <stdexcept>
 #include <cmath>
 
 namespace ethereal {
-    Texture::Texture(EtherealDevice& device, const std::string& filepath) : etherealDevice{ device } {
+    EtherealTexture::EtherealTexture(EtherealDevice& device, const std::string& filepath) : etherealDevice{ device } {
         int channels;
         int m_BytesPerPixel;
 
@@ -41,7 +44,6 @@ namespace ethereal {
         imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         imageInfo.extent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1 };
         imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-
 
         etherealDevice.createImageWithInfo(imageInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, image, imageMemory);
 
@@ -85,16 +87,38 @@ namespace ethereal {
         vkCreateImageView(etherealDevice.device(), &imageViewInfo, nullptr, &imageView);
 
         stbi_image_free(data);
+        writeDescriptors();
     }
 
-    Texture::~Texture() {
+    EtherealTexture::~EtherealTexture() {
         vkDestroyImage(etherealDevice.device(), image, nullptr);
         vkFreeMemory(etherealDevice.device(), imageMemory, nullptr);
         vkDestroyImageView(etherealDevice.device(), imageView, nullptr);
         vkDestroySampler(etherealDevice.device(), sampler, nullptr);
     }
 
-    void Texture::transitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout) {
+    void EtherealTexture::writeDescriptors() {
+        descriptorPool = EtherealDescriptorPool::Builder(etherealDevice)
+			.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
+			.build();
+
+        descriptorSetLayout = EtherealDescriptorSetLayout::Builder(etherealDevice)
+            .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+            .build();
+
+        VkDescriptorImageInfo imageInfo{};
+        imageInfo.imageLayout = imageLayout;
+        imageInfo.imageView = imageView;
+        imageInfo.sampler = sampler;
+
+        for (int i = 0; i < descriptorSets.size(); i++) {
+            EtherealDescriptorWriter(*descriptorSetLayout, *descriptorPool)
+                .writeImage(0, &imageInfo)
+                .build(descriptorSets[i]);
+        }
+    }
+
+    void EtherealTexture::transitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout) {
         VkCommandBuffer commandBuffer = etherealDevice.beginSingleTimeCommands();
 
         VkImageMemoryBarrier barrier{};
@@ -136,7 +160,7 @@ namespace ethereal {
         etherealDevice.endSingleTimeCommands(commandBuffer);
     }
 
-    void Texture::generateMipmaps() {
+    void EtherealTexture::generateMipmaps() {
         VkFormatProperties formatProperties;
         vkGetPhysicalDeviceFormatProperties(etherealDevice.getPhysicalDevice(), imageFormat, &formatProperties);
 

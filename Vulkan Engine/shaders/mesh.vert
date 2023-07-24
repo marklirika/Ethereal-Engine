@@ -36,5 +36,5 @@ void main() {
     fragNormalWorld = normalize(mat3(push.normalMatrix) * normal);
     fragPositionWorld = positionWorld.xyz;
     fragColor = color;
-    fragUV = uv;
+    fragUV = uv * 4;
 }

@@ -34,7 +34,6 @@ namespace ethereal {
 			EtherealDescriptorPool::Builder(etherealDevice)
 			.setMaxSets(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
-			.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, EtherealSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.build();
 		loadEntities();
 	}
@@ -57,25 +56,14 @@ namespace ethereal {
 		//setting descriptors global set layout
 		auto globalSetLayout = EtherealDescriptorSetLayout::Builder(etherealDevice)
 			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-			.addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
 			.build(); 
 
-		//texture init
-		std::unique_ptr<Texture> texture{};		
-		texture = std::make_unique<Texture>(etherealDevice, "textures/zhabka.jpg");
-
-		VkDescriptorImageInfo imageInfo = {};
-		imageInfo.sampler = texture->getSampler();
-		imageInfo.imageView = texture->getImageView();
-		imageInfo.imageLayout = texture->getImageLayout();
-		
 		//setting descriptors global sets
 		std::vector<VkDescriptorSet> globalDescriptorSets(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < globalDescriptorSets.size(); i++) {
 			auto bufferInfo = uboBuffers[i]->descriptorInfo();
 			EtherealDescriptorWriter(*globalSetLayout, *globalPool)
 				.writeBuffer(0, &bufferInfo)
-				.writeImage(1, &imageInfo)
 				.build(globalDescriptorSets[i]);
 		}
 
@@ -148,36 +136,49 @@ namespace ethereal {
 
 	void Application::loadEntities() {
 		
-		//sound system
-		auto musicPlayer = scene.createEntity("music_player");
-		auto& audio = musicPlayer.addComponent<AudioComponent>();
-		audio.type = AudioComponent::AudioType::MUSIC_TRACK;
-		AudioSystem::init();
-		AudioSystem::load(audio, "audio/music/boat.mp3");
-		AudioSystem::play(audio);
-		//barak_obama
-		auto barak_obama = scene.createEntity("barak_obama");
-		auto& unitGen = barak_obama.addComponent<UnitGenComponent>();
-		unitGen.isActive = true;
+		////sound system
+		//auto musicPlayer = scene.createEntity("music_player");
+		//auto& audio = musicPlayer.addComponent<AudioComponent>();
+		//audio.type = AudioComponent::AudioType::MUSIC_TRACK;
+		//AudioSystem::init();
+		//AudioSystem::load(audio, "audio/music/boat.mp3");
+		//AudioSystem::play(audio);
 
-		//terrain
-		std::shared_ptr<EtherealModel> terrainModel = 
-			Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
-		auto terrain = scene.createEntity("terrain");
-		auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
-		auto& terrainTransform = terrain.getComponent<TransformComponent>();
-		terrainTransform.scale = { 0.5f,0.5f,0.5f };
-		terrainTransform.translation = { -100.f, 0.f, -100.f };
-		terrainTransform.rotation += glm::radians(90.0f);
+		////terrain
+		//std::shared_ptr<EtherealModel> terrainModel = 
+		//	Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
+		//auto terrain = scene.createEntity("terrain");
+		//auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
+		//auto& terrainTransform = terrain.getComponent<TransformComponent>();
+		//terrainTransform.scale = { 0.5f,0.5f,0.5f };
+		//terrainTransform.translation = { -100.f, 0.f, -100.f };
+		//terrainTransform.rotation += glm::radians(90.0f);
 
 		//frog + light below
-		//std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
-		//auto frog = scene.createEntity("frog");
-		//auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
-		//auto& frogTransfrom = frog.getComponent<TransformComponent>();
-		//frogTransfrom.translation = { 0.f, 0.f, 0.f };
-		//frogTransfrom.scale = { 1, 1, 1 };
-		//frogTransfrom.rotation += glm::radians(90.0f);
+		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
+		auto frog = scene.createEntity("frog");
+		auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
+		std::shared_ptr<EtherealTexture> carbonTexture =
+			std::make_shared<EtherealTexture>(etherealDevice, "textures/carbon.jpg");
+		auto& frogTexture = frog.addComponent<TextureComponent>();
+		frogTexture.texture = carbonTexture;
+		auto& frogTransfrom = frog.getComponent<TransformComponent>();
+		frogTransfrom.translation = { 0.f, 0.f, 0.f };
+		frogTransfrom.scale = { 0.5, 0.5, 0.5 };
+		frogTransfrom.rotation += glm::radians(90.0f);
+
+		//frog_2 + light below
+		auto frog_2 = scene.createEntity("frog");
+		auto& frog_2Mesh = frog_2.addComponent<MeshComponent>(etherealModel);
+		std::shared_ptr<EtherealTexture> paperTexture =
+			std::make_shared<EtherealTexture>(etherealDevice, "textures/paper_yellow.jpg");
+		auto& frog_2Texture = frog_2.addComponent<TextureComponent>();
+		frog_2Texture.texture = paperTexture;
+		auto& frog_2Transfrom = frog_2.getComponent<TransformComponent>();
+		frog_2Transfrom.translation = { 10.f, 0.f, 0.f };
+		frog_2Transfrom.scale = { 0.5, 0.5, 0.5 };
+		frog_2Transfrom.rotation += glm::radians(90.0f);
+
 
 		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},
