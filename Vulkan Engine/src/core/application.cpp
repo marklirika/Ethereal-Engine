@@ -104,7 +104,7 @@ namespace ethereal {
 		//Main Loop
 		while (!etherealWindow.shouldClose()) {
 			eHelp::timer loopdt;
-			loopdt.start();
+			
 			
 			glfwPollEvents();
 
@@ -144,8 +144,6 @@ namespace ethereal {
 				etherealRenderer.endSwapChainRenderPass(commandBuffer);
 				etherealRenderer.endFrame();
 			}
-			loopdt.dt();
-			std::cout << loopdt.delta_time  << "\n";
 		}
 
 		auto result = vkDeviceWaitIdle(etherealDevice.device());
@@ -162,33 +160,46 @@ namespace ethereal {
 		auto& unitGen = barak_obama.addComponent<UnitGenComponent>();
 		auto& barakT = barak_obama.getComponent<TransformComponent>();
 		barakT.translation = { 0, 0 , 0 };
-		barakT.scale = { 2, 2, 2 };
-		unitGen.limit = 5;
+		barakT.scale = { 1, 1, 1};
+		unitGen.limit = 10;
 		unitGen.queue = 1;
-		unitGen.spawnPoint = { barakT.translation.x - 10, barakT.translation.y, barakT.translation.z };
-		unitGen.destinationPoint = { -1, 0, -1 };
+		unitGen.spawnPoint = { barakT.translation.x, barakT.translation.y, barakT.translation.z };
+		unitGen.destinationPoint = {0, 0, 20};
+
+
+		auto ben_laden = scene.createEntity("ben_laden");
+		auto& ben_ladenmesh = ben_laden.addComponent<MeshComponent>(barakModel);
+		auto& ben_ladenunitGen = ben_laden.addComponent<UnitGenComponent>();
+		auto & ben_ladenbarakT = ben_laden.getComponent<TransformComponent>();
+		ben_ladenbarakT.translation = { 0, 0 , 0 };
+		ben_ladenbarakT.scale = { 1, 1, 1 };
+		ben_ladenunitGen.limit = 10;
+		ben_ladenunitGen.queue = 5;
+		ben_ladenunitGen.spawnPoint = { ben_ladenbarakT.translation.x, ben_ladenbarakT.translation.y, ben_ladenbarakT.translation.z };
+		ben_ladenunitGen.destinationPoint = {0 , 0, -20 };
+
 
 		//terrain
 		std::shared_ptr<EtherealModel> terrainModel = Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
 		auto terrain = scene.createEntity("terrain");
 		auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
 		auto& terrainTransform = terrain.getComponent<TransformComponent>();
-		terrainTransform.scale = { 0.5f,0.5f,0.5f };
+		terrainTransform.scale = { 1,1,1};
 		terrainTransform.translation = { -100.f, 0.f, -100.f };
 		terrainTransform.rotation += glm::radians(90.0f);
 
 		//frog + light below
-		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		
+		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/16433_Pig.obj");		
 		auto frog = scene.createEntity("frog");
-		auto& frogMesh = frog.addComponent<MeshComponent>(etherealModel);
-		auto& frogTransfrom = frog.getComponent<TransformComponent>();
-		auto& frogMovement = frog.addComponent<MovementComponent>();
-		frogTransfrom.translation = { 0.f, 0.f, 0.f };
-		frogTransfrom.scale = { 1, 1, 1 };
-		frogTransfrom.rotation += glm::radians(90.0f);
-		frogMovement.speed = 1;
-		frogMovement.destination = {-1, 0, -1};
-		frogMovement.isMoving = true;
+		auto& frogmesh = frog.addComponent<MeshComponent>(etherealModel);
+		auto& frogtransfrom = frog.getComponent<TransformComponent>();
+		auto& frogmovement = frog.addComponent<MovementComponent>();
+		frogtransfrom.translation = { 0.f, 0.f, 0.f };
+		frogtransfrom.scale = { 1, 1, 1 };
+		//frogtransfrom.rotation += glm::radians(90.0f);
+		frogmovement.speed = 1;
+		frogmovement.destination = {10, 0, 10};
+		frogmovement.isMoving = true;
 
 		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},

@@ -1,4 +1,6 @@
 #include "movement_system.h"
+#include <iostream>
+
 
 
 namespace ethereal {
@@ -6,15 +8,29 @@ namespace ethereal {
 		auto view = info.scene.getRegistry().view<MovementComponent, TransformComponent>();
 		for (auto entity : view) {
 			auto& unitMovement = view.get<MovementComponent>(entity);
-			if (unitMovement.isMoving == true) {
-				auto& unitTranform = view.get<TransformComponent>(entity);
-				unitTranform.translation.x = (unitTranform.translation.x != unitMovement.destination.x) ? unitTranform.translation.x + (info.frameTime * unitMovement.speed) : unitTranform.translation.x;
-				unitTranform.translation.y = (unitTranform.translation.y != unitMovement.destination.y) ? unitTranform.translation.y + (info.frameTime * unitMovement.speed) : unitTranform.translation.y;
-				unitTranform.translation.z = (unitTranform.translation.z != unitMovement.destination.z) ? unitTranform.translation.z + (info.frameTime * unitMovement.speed) : unitTranform.translation.z;
-				unitMovement.isMoving = (unitMovement.destination == unitTranform.translation) ? false : true;
-			}
 			
+			if (unitMovement.isMoving == true) {
+				auto& unitTransform = view.get<TransformComponent>(entity);
+				glm::vec3 targetPosition = unitMovement.destination;
+				glm::vec3 currentPosition = unitTransform.translation;
+				glm::vec3 direction = targetPosition - currentPosition;
+				float distanceToTarget = glm::length(direction);
+
+				if (distanceToTarget > 0.01f) { 
+					float distanceToMove = unitMovement.speed * info.frameTime;
+					glm::vec3 movement = glm::normalize(direction) * std::min(distanceToMove, distanceToTarget);
+					unitTransform.translation -= movement;
+
+					//std::cout << unitTransform.translation.x << "\t" << unitTransform.translation.y << "\t" << unitTransform.translation.z << "\n";
+				}
+				else {
+					std::cout << "unit reached the destination " << unitTransform.translation.x << "\t" << unitTransform.translation.y << "\t" << unitTransform.translation.z << "\n";
+					unitTransform.translation = targetPosition;
+					unitMovement.isMoving = false;
+				}
+				}
+			}	
+		          
 		}
 
 	}
-} // ethereal

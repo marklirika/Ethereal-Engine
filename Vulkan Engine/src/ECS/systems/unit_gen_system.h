@@ -3,6 +3,9 @@
 #include "core/ethereal_device.h"
 #include "ECS/components/movement_component.h"
 
+#define GLM_FORCE_RADIANCE
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+
 namespace ethereal {
 
 	class UnitGenSystem {

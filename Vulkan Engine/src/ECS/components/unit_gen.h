@@ -4,9 +4,11 @@
 #include "ECS/ethereal_entity.h"
 #include "ECS/ethereal_scene.h"
 #include "ECS/ethereal_components.h"
+#include <glm/glm.hpp>
+
 
 struct UnitGenComponent {
-	float finishTime = std::chrono::seconds(2).count();
+	float finishTime = std::chrono::seconds(5).count();
 	float processTime;
 	
 	//queue
