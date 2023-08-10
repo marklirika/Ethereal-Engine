@@ -3,7 +3,7 @@
 #include "ethereal_device.h" 
 #include "render/ethereal_renderer.h"
 #include "ethereal_window.h"
-#include "render/ethereal_camera.h"
+#include "resources/ethereal_camera.h"
 #include "ECS/ethereal_scene.h"
 #include "ECS/ethereal_entity.h"
 #include "ECS/ethereal_components.h"

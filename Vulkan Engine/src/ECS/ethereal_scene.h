@@ -14,7 +14,6 @@ namespace ethereal {
 		Entity createEntity(const std::string& name);
 
 		entt::registry& getRegistry() { return _registry; }
-
 	private:
 		entt::registry _registry;
 

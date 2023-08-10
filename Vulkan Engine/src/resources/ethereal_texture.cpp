@@ -2,7 +2,7 @@
 #include "ethereal_texture.h"
 #include "memory/ethereal_buffer.h"
 #include "core/ethereal_device.h"
-#include "core/ethereal_swap_chain.h"
+#include "render/ethereal_swap_chain.h"
 
 #include <vulkan/vulkan_core.h>
 #include "../../external/stb/stb_image.h"
@@ -70,7 +70,9 @@ namespace ethereal {
         samplerInfo.anisotropyEnable = VK_TRUE;
         samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
 
-        vkCreateSampler(etherealDevice.device(), &samplerInfo, nullptr, &sampler);
+        if (vkCreateSampler(etherealDevice.device(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create texture sampler!");
+        }
 
         VkImageViewCreateInfo imageViewInfo{};
         imageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -84,7 +86,9 @@ namespace ethereal {
         imageViewInfo.subresourceRange.levelCount = mipLevels;
         imageViewInfo.image = image;
 
-        vkCreateImageView(etherealDevice.device(), &imageViewInfo, nullptr, &imageView);
+        if (vkCreateImageView(etherealDevice.device(), &imageViewInfo, nullptr, &imageView) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create texture image view!");
+        }
 
         stbi_image_free(data);
         writeDescriptors();

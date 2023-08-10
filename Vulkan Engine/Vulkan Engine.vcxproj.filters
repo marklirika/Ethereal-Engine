@@ -30,22 +30,22 @@
     <ClCompile Include="src\core\application.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\ethereal_pipeline.cpp">
+    <ClCompile Include="src\render\ethereal_pipeline.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\core\ethereal_device.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\ethereal_swap_chain.cpp">
+    <ClCompile Include="src\render\ethereal_swap_chain.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\ethereal_model.cpp">
+    <ClCompile Include="src\resources\ethereal_model.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\render\ethereal_renderer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\ethereal_camera.cpp">
+    <ClCompile Include="src\resources\ethereal_camera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\utility\KeybordInput.cpp">
@@ -69,16 +69,16 @@
     <ClCompile Include="src\ECS\components\transform.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\ECS\systems\mesh_render_system.cpp">
+    <ClCompile Include="src\render\render systems\forward_render_system.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\ECS\systems\point_light_render_system..cpp">
+    <ClCompile Include="src\render\render systems\point_light_render_system..cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Frog%27s Empire\terrain\terrain.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\ethereal_texture.cpp">
+    <ClCompile Include="src\resources\ethereal_texture.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Frog%27s Empire\unit_gen\unit_gen_system.cpp">
@@ -90,10 +90,16 @@
     <ClCompile Include="src\ECS\systems\audio_system.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\ECS\systems\collision_system.cpp">
+    <ClCompile Include="src\ECS\components\collision.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\ECS\components\collision.cpp">
+    <ClCompile Include="src\render\deffered rendering\deffered_renderer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\deffered rendering\deffered_swap_chain.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\render systems\deffered_render_system.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,16 +110,16 @@
     <ClInclude Include="src\core\application.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\ethereal_pipeline.h">
+    <ClInclude Include="src\render\ethereal_pipeline.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\core\ethereal_device.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\ethereal_swap_chain.h">
+    <ClInclude Include="src\render\ethereal_swap_chain.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\ethereal_model.h">
+    <ClInclude Include="src\resources\ethereal_model.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\resource.h">
@@ -122,7 +128,7 @@
     <ClInclude Include="src\render\ethereal_renderer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\ethereal_camera.h">
+    <ClInclude Include="src\resources\ethereal_camera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\utility\KeybordInput.h">
@@ -161,10 +167,10 @@
     <ClInclude Include="src\ECS\components\tag.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\systems\mesh_render_system.h">
+    <ClInclude Include="src\render\render systems\forward_render_system.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\systems\point_light_render_system.h">
+    <ClInclude Include="src\render\render systems\point_light_render_system.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\ECS\components\mesh.h">
@@ -173,7 +179,7 @@
     <ClInclude Include="src\Frog%27s Empire\terrain\terrain.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\ethereal_texture.h">
+    <ClInclude Include="src\resources\ethereal_texture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Frog%27s Empire\unit_gen\unit_gen_component.h">
@@ -191,7 +197,16 @@
     <ClInclude Include="src\ECS\components\collision.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\systems\collision_system.h">
+    <ClInclude Include="src\ECS\components\texture.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\deffered rendering\deffered_renderer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\deffered rendering\deffered_swap_chain.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\render systems\deffered_render_system.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,12 +1,5 @@
 #include "ethereal_renderer.h"
 
-//std
-#include <stdexcept>;
-#include <array>
-#include <string>
-#include <iostream>
-#include <memory>
-
 namespace ethereal {
 
 	EtherealRenderer::EtherealRenderer(EtherealWindow& window, EtherealDevice& device) : etherealWindow{ window }, etherealDevice{device} {
@@ -55,7 +48,6 @@ namespace ethereal {
 		commandBuffers.clear();
 	}
 
-
 	VkCommandBuffer EtherealRenderer::beginFrame() {
 		assert(!isFrameStarted && "Can't call while beginFrame already in progress");
 		auto result = etherealSwapChain->acquireNextImage(&currentImageIndex);
@@ -79,6 +71,7 @@ namespace ethereal {
 		}
 		return commandBuffer;
 	}
+
 	void EtherealRenderer::endFrame() {
 		assert(isFrameStarted && "Frame is not in progress");
 		auto commandBuffer = getCurrentCommandBuffer();
@@ -100,9 +93,13 @@ namespace ethereal {
 		currentFrameIndex = (currentFrameIndex + 1) % EtherealSwapChain::MAX_FRAMES_IN_FLIGHT;
 		
 	}
+
 	void EtherealRenderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
 		assert(isFrameStarted && "Cannot call beginSCRP, frame is not in progress");
 		assert(commandBuffer == getCurrentCommandBuffer() && "Cannot begin render of a different frame");
+		std::array<VkClearValue, 2> clearValues{};
+		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		clearValues[1].depthStencil = { 1.0f, 0 };
 		
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -110,10 +107,6 @@ namespace ethereal {
 		renderPassInfo.framebuffer = etherealSwapChain->getFrameBuffer(currentImageIndex);
 		renderPassInfo.renderArea.offset = { 0, 0 };
 		renderPassInfo.renderArea.extent = etherealSwapChain->getSwapChainExtent();
-
-		std::array<VkClearValue, 2> clearValues{};
-		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
-		clearValues[1].depthStencil = { 1.0f, 0 };
 		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
 
@@ -129,8 +122,8 @@ namespace ethereal {
 		VkRect2D scissor{ {0, 0}, etherealSwapChain->getSwapChainExtent() };
 		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-
 	}
+
 	void EtherealRenderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer) {
 		assert(isFrameStarted && "Cannot call endSCRP, frame is not in progress");
 		assert(commandBuffer == getCurrentCommandBuffer() && "Cannot end render of a different frame");

@@ -12,4 +12,3 @@ float eHelp::timer::dt() {
 void eHelp::timer::reset() {
 	start_point = end_point;
 }
-

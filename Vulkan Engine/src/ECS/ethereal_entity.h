@@ -29,7 +29,7 @@ namespace ethereal {
 		void removeComponent()	{
 			scene._registry.remove<T>(entityHandle);
 		} 
-
+			
 		operator bool() const { return entityHandle != entt::null; }
 	private:
 		entt::entity entityHandle{ entt::null };

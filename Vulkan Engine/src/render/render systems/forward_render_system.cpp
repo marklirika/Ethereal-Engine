@@ -1,4 +1,4 @@
-#include "mesh_render_system.h"
+#include "forward_render_system.h"
 
 //GLFW
 #define GLM_FORCE_RADIANCE
@@ -17,17 +17,17 @@ namespace ethereal {
 		glm::mat4 normalMatrix{ 1.f };
 	};
 
-	MeshRenderSystem::MeshRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout) 
+	ForwardRenderSystem::ForwardRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout) 
 		: etherealDevice{ device } {
 		createPipelineLayout(globalSetLayout);
 		createPipeline(renderPass);
 	}
 
-	MeshRenderSystem::~MeshRenderSystem() {
+	ForwardRenderSystem::~ForwardRenderSystem() {
 		vkDestroyPipelineLayout(etherealDevice.device(), pipelineLayout, nullptr);
 	}
 
-	void MeshRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
+	void ForwardRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
 		VkPushConstantRange pushConstantRange{};
 		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		pushConstantRange.offset = 0;
@@ -49,13 +49,13 @@ namespace ethereal {
 			throw std::runtime_error("fail to create pipelinelayout");
 	}
 
-	void MeshRenderSystem::createPipeline(VkRenderPass renderPass) {
+	void ForwardRenderSystem::createPipeline(VkRenderPass renderPass) {
 		assert(pipelineLayout != nullptr && "Cannot create pipeline before pupeline layout");
 
 		PipelineConfigInfo pipelineConfig{};
 		EtherealPipeline::defaultPipelineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass = renderPass;
-		pipelineConfig.pipelineLayout = pipelineLayout;
+		pipelineConfig.pipelineLayout = pipelineLayout;	
 		etherealPipeline = std::make_unique<EtherealPipeline>(
 			etherealDevice,
 			"shaders/mesh.vert.spv",
@@ -63,7 +63,7 @@ namespace ethereal {
 			pipelineConfig);
 	}
 
-	void MeshRenderSystem::bind(std::shared_ptr<EtherealModel> model, 
+	void ForwardRenderSystem::bind(std::shared_ptr<EtherealModel> model, 
 		std::shared_ptr<EtherealTexture> texture, 
 		FrameInfo& frameInfo) {
 		VkBuffer buffers[] = { model->vertexBuffer->getBuffer() };
@@ -83,7 +83,7 @@ namespace ethereal {
 			nullptr);
 	}
 
-	void MeshRenderSystem::draw(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer) {
+	void ForwardRenderSystem::draw(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer) {
 		if (model->hasIndexBuffer) {
 			vkCmdDrawIndexed(commandBuffer, model->indexCount, 1, 0, 0, 0);
 		}
@@ -92,7 +92,7 @@ namespace ethereal {
 		}
 	}
 
-	void MeshRenderSystem::renderMesh(FrameInfo& frameInfo) {
+	void ForwardRenderSystem::render(FrameInfo& frameInfo) {
 		etherealPipeline->bind(frameInfo.commandBuffer);
 
 		vkCmdBindDescriptorSets(frameInfo.commandBuffer,

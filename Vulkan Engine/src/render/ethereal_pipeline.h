@@ -1,5 +1,5 @@
  #pragma once
-#include "ethereal_device.h"
+#include "core/ethereal_device.h"
 
 //std
 #include <string>
@@ -43,11 +43,10 @@ namespace ethereal {
 	public:
 		EtherealPipeline(EtherealDevice& device, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& configInfo);
 		~EtherealPipeline();
-
-		void bind(VkCommandBuffer commandBuffer);
-
 		EtherealPipeline(const EtherealPipeline&) = delete;
 		EtherealPipeline &operator=(EtherealPipeline&) = delete; 
+
+		void bind(VkCommandBuffer commandBuffer);
 
 		static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 		static void enableAlphaBlending(PipelineConfigInfo& configInfo);
@@ -55,9 +54,8 @@ namespace ethereal {
 		static std::vector<char> readFile(const std::string& filepath);
 
 		void createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& configInfo);
-
 		void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
-
+		
 		EtherealDevice& etherealDevice;
 		VkPipeline graphicsPipeline;
 		VkShaderModule vertShaderModule;

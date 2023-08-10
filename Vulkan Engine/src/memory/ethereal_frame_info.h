@@ -1,6 +1,6 @@
 #pragma once
 
-#include "render/ethereal_camera.h"
+#include "resources/ethereal_camera.h"
 #include "ECS/ethereal_scene.h"
 #include <vulkan/vulkan.h>
 
@@ -21,12 +21,30 @@ namespace ethereal {
 		int numLights;
 	};
 
+	struct OffscreenFrameBufferAttachment {
+		VkImage image;
+		VkDeviceMemory mem;
+		VkImageView view;
+		VkFormat format;
+	};
+
+	struct OffscreenFrameBuffer {
+		int32_t width, height;
+		VkFramebuffer frameBuffer;
+		OffscreenFrameBufferAttachment position, normal, albedo;
+		OffscreenFrameBufferAttachment depth;
+		VkRenderPass renderPass;
+	};
+
+
 	struct FrameInfo {
 		int frameIndex;
 		float frameTime;
+		VkCommandBuffer offscreenCmdBuffer;
 		VkCommandBuffer commandBuffer;
-		EtherealCamera& camera;
+		OffscreenFrameBuffer& offscreenFrmBuffer;
 		VkDescriptorSet globaDescriptorSet;
+		EtherealCamera& camera;
 		Scene& scene;
 	};
 }

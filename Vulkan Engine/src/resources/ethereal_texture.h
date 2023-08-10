@@ -1,7 +1,7 @@
 #pragma once
 #include <vulkan/vulkan_core.h>
 #include "core/ethereal_device.h"
-#include "core/ethereal_swap_chain.h"
+#include "render/ethereal_swap_chain.h"
 #include "memory/ethereal_descriptors.h"
 #include <string.h>
 namespace ethereal {

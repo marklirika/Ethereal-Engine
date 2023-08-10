@@ -1,8 +1,8 @@
 #pragma once
 
 #include "core/ethereal_device.h" 
-#include "core/ethereal_pipeline.h"
-#include "render/ethereal_camera.h"
+#include "render/ethereal_pipeline.h"
+#include "resources/ethereal_camera.h"
 #include "memory/ethereal_frame_info.h"
 #include "ECS/ethereal_components.h"
 
@@ -13,9 +13,7 @@
 namespace ethereal {
 
 	class PointLightRenderSystem {
-
 	public:
-
 		PointLightRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
 		~PointLightRenderSystem();
 
@@ -29,9 +27,9 @@ namespace ethereal {
 		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);	
 		void createPipeline(VkRenderPass renderPass);
 
-		EtherealDevice& etherealDevice;
-
 		std::unique_ptr<EtherealPipeline> etherealPipeline;
 		VkPipelineLayout pipelineLayout;
+		EtherealDevice& etherealDevice;
 	};
-}
+
+} // namespace ethereal

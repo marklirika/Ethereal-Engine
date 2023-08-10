@@ -1,5 +1,5 @@
 #pragma once
-#include "render/ethereal_texture.h"
+#include "resources/ethereal_texture.h"
 #include <memory>
 
 namespace ethereal {
@@ -7,4 +7,5 @@ namespace ethereal {
 	struct TextureComponent {
 		std::shared_ptr<EtherealTexture> texture;
 	};
+
 }

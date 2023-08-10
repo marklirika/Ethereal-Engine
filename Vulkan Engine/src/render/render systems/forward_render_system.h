@@ -1,11 +1,11 @@
 #pragma once
 #include "ECS/ethereal_components.h"
 #include "core/ethereal_device.h" 
-#include "core/ethereal_pipeline.h"
+#include "render/ethereal_pipeline.h"
 #include "memory/ethereal_descriptors.h"
 #include "memory/ethereal_frame_info.h"
-#include "render/ethereal_camera.h"
-#include "render/ethereal_model.h"
+#include "resources/ethereal_camera.h"
+#include "resources/ethereal_model.h"
 
 //std
 #include <memory>
@@ -13,30 +13,27 @@
 
 namespace ethereal {
 
-	class MeshRenderSystem {
-
+	class ForwardRenderSystem {
 	public:
-		MeshRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
-		~MeshRenderSystem();
+		ForwardRenderSystem(EtherealDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+		~ForwardRenderSystem();
 
-		MeshRenderSystem(const MeshRenderSystem&) = delete;
-		MeshRenderSystem& operator=(const MeshRenderSystem&) = delete;
+		ForwardRenderSystem(const ForwardRenderSystem&) = delete;
+		ForwardRenderSystem& operator=(const ForwardRenderSystem&) = delete;
 
 		void bind(std::shared_ptr<EtherealModel> model, 
 			std::shared_ptr<EtherealTexture> texture, 
 			FrameInfo& frameInfo);
-
 		void draw(std::shared_ptr<EtherealModel> model, VkCommandBuffer commandBuffer);
 
-		void renderMesh(FrameInfo &frameInfo);
-
+		void render(FrameInfo &frameInfo);
 	private:
 		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);	
 		void createPipeline(VkRenderPass renderPass);
 
-		EtherealDevice& etherealDevice;
-
 		std::unique_ptr<EtherealPipeline> etherealPipeline;
 		VkPipelineLayout pipelineLayout;
+		EtherealDevice& etherealDevice;
 	};
+
 }

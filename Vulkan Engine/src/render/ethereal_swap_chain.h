@@ -1,15 +1,30 @@
 #pragma once
-#include "ethereal_device.h"
+#include "core/ethereal_device.h"
 
 // vulkan headers
 #include <vulkan/vulkan.h>
 
-// std lib headers
+// std
+#include <array>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <limits>
+#include <set>
+#include <stdexcept>
 #include <memory>
 #include <string>
 #include <vector>
+#include <cassert>
 
 namespace ethereal {
+
+    struct FrameBufferAttachment {
+        VkImage image;
+        VkDeviceMemory mem;
+        VkImageView view;
+        VkFormat format;
+    };
 
     class EtherealSwapChain {
     public:
@@ -31,12 +46,15 @@ namespace ethereal {
         VkExtent2D getSwapChainExtent() { return swapChainExtent; }
         uint32_t width() { return swapChainExtent.width; }
         uint32_t height() { return swapChainExtent.height; }
-
         float extentAspectRatio() {
             return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
         }
         
         VkFormat findDepthFormat();
+        void createAttachment(
+            VkFormat format,
+            VkImageUsageFlagBits usage,
+            FrameBufferAttachment* attachment);
 
         VkResult acquireNextImage(uint32_t* imageIndex);
         VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
@@ -61,29 +79,30 @@ namespace ethereal {
             const std::vector<VkPresentModeKHR>& availablePresentModes);
         VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
-        VkFormat swapChainImageFormat;
-        VkFormat swapChainDepthFormat;
-        VkExtent2D swapChainExtent;
-
         std::vector<VkFramebuffer> swapChainFramebuffers;
+        std::vector<FrameBufferAttachment> attachments;
         VkRenderPass renderPass;
 
         std::vector<VkImage> depthImages;
-        std::vector<VkDeviceMemory> depthImageMemorys;
+        std::vector<VkDeviceMemory> depthImageMemory;
         std::vector<VkImageView> depthImageViews;
+        VkFormat swapChainDepthFormat;
+
         std::vector<VkImage> swapChainImages;
         std::vector<VkImageView> swapChainImageViews;
-
-        EtherealDevice& device;
-        VkExtent2D windowExtent;
-
-        VkSwapchainKHR swapChain;
-        std::shared_ptr<EtherealSwapChain> oldSwapChain;
+        VkFormat swapChainImageFormat;
 
         std::vector<VkSemaphore> imageAvailableSemaphores;
         std::vector<VkSemaphore> renderFinishedSemaphores;
         std::vector<VkFence> inFlightFences;
         std::vector<VkFence> imagesInFlight;
-        size_t currentFrame = 0;
+        size_t currentFrame = 0;      
+
+        VkExtent2D windowExtent;
+        VkExtent2D swapChainExtent;
+        EtherealDevice& etherealDevice;
+        std::shared_ptr<EtherealSwapChain> oldSwapChain;
+        VkSwapchainKHR swapChain;
+        friend class DefferedSwapChain;
     };
 }

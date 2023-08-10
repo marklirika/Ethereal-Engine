@@ -1,11 +1,11 @@
 #include "application.h"
 
-#include "ECS/systems/mesh_render_system.h"
-#include "ECS/systems/point_light_render_system.h"
-#include "ECS/systems/audio_system.h"
-
+//custom
 #include "memory/ethereal_buffer.h"
-#include "render/ethereal_texture.h"
+#include "resources/ethereal_texture.h"
+#include "render/render systems/forward_render_system.h"
+#include "render/render systems/point_light_render_system.h"
+#include "ECS/systems/audio_system.h"
 #include "utility/KeybordInput.h"
 #include "utility/utils.h"
 
@@ -14,6 +14,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp> 
+#include <glm/gtx/euler_angles.hpp>
 
 //std
 #include <chrono>
@@ -23,6 +24,7 @@
 #include <iostream>
 #include <memory>
 
+//Gameplay features
 #include "Frog's Empire/terrain/terrain.h"
 #include "Frog's Empire/unit_gen/unit_gen_system.h"
 
@@ -68,7 +70,7 @@ namespace ethereal {
 		}
 
 		//setting systems
-		MeshRenderSystem etherealRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
+		ForwardRenderSystem forwardRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
 		PointLightRenderSystem lightPointRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
 		UnitGenSystem unitGenSystem{ etherealDevice };
 
@@ -105,8 +107,17 @@ namespace ethereal {
 			if (auto commandBuffer = etherealRenderer.beginFrame()) {
 				std::size_t size = scene.getRegistry().size();
 				int frameIndex = etherealRenderer.getFrameIndex();
+				//index, time, offscreenCmd, composeCmd, offscreenFrm, globalDS, cameran, scene
+				OffscreenFrameBuffer testFrm;
 				FrameInfo frameInfo { 
-					frameIndex, frameTime, commandBuffer, camera, globalDescriptorSets[frameIndex], scene	
+					frameIndex, 
+					frameTime, 
+					VK_NULL_HANDLE, 
+					commandBuffer, 
+					testFrm, 
+					globalDescriptorSets[frameIndex], 
+					camera, 
+					scene
 				};
 
 				//update
@@ -121,7 +132,7 @@ namespace ethereal {
 				AudioSystem::update(frameInfo);
 				//render
 				etherealRenderer.beginSwapChainRenderPass(commandBuffer);
-                etherealRenderSystem.renderMesh(frameInfo);
+				forwardRenderSystem.render(frameInfo);
 				lightPointRenderSystem.render(frameInfo);
 				etherealRenderer.endSwapChainRenderPass(commandBuffer);
 				etherealRenderer.endFrame();
@@ -179,27 +190,42 @@ namespace ethereal {
 		frog_2Transfrom.scale = { 0.5, 0.5, 0.5 };
 		frog_2Transfrom.rotation += glm::radians(90.0f);
 
+		glm::vec3 currentPosition(frogTransfrom.translation);
+		glm::vec3 currentRotation(frogTransfrom.rotation); // Предполагаем, что углы вращения в градусах
 
-		std::vector<glm::vec3> lightColors {
-			{1.f, .1f, .1f},
-			{.1f, .1f, 1.f},
-			{.1f, 1.f, .1f},
-			{1.f, 1.f, .1f},
-			{.1f, 1.f, 1.f},
-			{1.f, 1.f, 1.f} 
-		};
+		// Целевые координаты, куда нужно переместить объект
+		glm::vec3 targetPosition(20.0f, -10.0f, 10.0f);
 
-		for (int i = 0; i < lightColors.size(); i++) {
-			const std::string name = "point light " + std::to_string(i);
-			auto pointLightEntity = scene.createEntity(name);
-			auto& pointLight = pointLightEntity.addComponent<PointLightComponent>(1.f, lightColors[i]);
-			auto rotateLight = glm::rotate(
-				glm::mat4{ 1.f },
-				(i * glm::two_pi<float>()) / lightColors.size(), 
-				{ 0.f, -1.f, 0.f });
+		// Создание матрицы вида для направления объекта на целевые координаты
+		glm::mat4 viewMatrix = glm::lookAt(currentPosition, targetPosition, glm::vec3(0.0f, 1.0f, 0.0f));
 
-			pointLightEntity.getComponent<TransformComponent>().translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
-		}
+		// Извлечение углов Эйлера из матрицы вида
+		glm::vec3 newRotation = glm::eulerAngles(glm::quat_cast(viewMatrix));
+
+		frogTransfrom.rotation = newRotation;
+
+		// Преобразование углов в градусы
+		newRotation = glm::degrees(newRotation);
+		//std::vector<glm::vec3> lightColors {
+		//	{1.f, .1f, .1f},
+		//	{.1f, .1f, 1.f},
+		//	{.1f, 1.f, .1f},
+		//	{1.f, 1.f, .1f},
+		//	{.1f, 1.f, 1.f},
+		//	{1.f, 1.f, 1.f} 
+		//};
+
+		//for (int i = 0; i < lightColors.size(); i++) {
+		//	const std::string name = "point light " + std::to_string(i);
+		//	auto pointLightEntity = scene.createEntity(name);
+		//	auto& pointLight = pointLightEntity.addComponent<PointLightComponent>(1.f, lightColors[i]);
+		//	auto rotateLight = glm::rotate(
+		//		glm::mat4{ 1.f },
+		//		(i * glm::two_pi<float>()) / lightColors.size(), 
+		//		{ 0.f, -1.f, 0.f });
+
+		//	pointLightEntity.getComponent<TransformComponent>().translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+		//}
 
 		auto sun = scene.createEntity("Sun");
 		sun.addComponent<PointLightComponent>(50000000.f, glm::vec3(1.f, 1.f, 1.f));

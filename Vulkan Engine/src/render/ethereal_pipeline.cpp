@@ -1,5 +1,5 @@
 #include "ethereal_pipeline.h"
-#include "render/ethereal_model.h"
+#include "resources/ethereal_model.h"
 
 namespace ethereal {
 
@@ -33,9 +33,9 @@ namespace ethereal {
 	}
 
 	void EtherealPipeline::createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath,const PipelineConfigInfo& configInfo) {
-		
 		assert(configInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipelineLayout provided in configInfo");
 		assert(configInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics renderPass provided in configInfo");
+
 		auto vertCode = readFile(vertFilepath);
 		auto fragCode = readFile(fragFilepath);
 
@@ -95,7 +95,6 @@ namespace ethereal {
 	}
 
 	void EtherealPipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) {
-
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		createInfo.codeSize = code.size();

@@ -1,5 +1,5 @@
 #pragma once
-#include "render/ethereal_model.h"
+#include "resources/ethereal_model.h"
 #include <memory>
 
 namespace ethereal {
