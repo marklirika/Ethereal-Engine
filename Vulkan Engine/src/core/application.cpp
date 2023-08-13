@@ -4,6 +4,7 @@
 #include "memory/ethereal_buffer.h"
 #include "resources/ethereal_texture.h"
 #include "render/render systems/forward_render_system.h"
+#include "render/render systems/deffered_render_system.h"
 #include "render/render systems/point_light_render_system.h"
 #include "ECS/systems/audio_system.h"
 #include "utility/KeybordInput.h"
@@ -71,6 +72,7 @@ namespace ethereal {
 
 		//setting systems
 		ForwardRenderSystem forwardRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
+		//DefferedRenderSystem defferedRenderSystem{};
 		PointLightRenderSystem lightPointRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
 		UnitGenSystem unitGenSystem{ etherealDevice };
 

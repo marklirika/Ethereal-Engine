@@ -16,7 +16,6 @@ namespace ethereal {
 		entt::registry& getRegistry() { return _registry; }
 	private:
 		entt::registry _registry;
-
 		friend class Entity;
 	};
 }

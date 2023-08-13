@@ -2,7 +2,7 @@
 
 namespace ethereal {
 
-	EtherealRenderer::EtherealRenderer(EtherealWindow& window, EtherealDevice& device) : etherealWindow{ window }, etherealDevice{device} {
+	EtherealRenderer::EtherealRenderer(EtherealWindow& window, EtherealDevice& device) : etherealWindow{ window }, etherealDevice{ device } {
 		recreateSwapChain();
 		createCommandBuffers();
 	}

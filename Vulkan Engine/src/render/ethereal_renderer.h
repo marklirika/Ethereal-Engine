@@ -2,6 +2,7 @@
 
 #include "core/ethereal_device.h" 
 #include "render/ethereal_swap_chain.h"
+#include "render/deffered rendering/deffered_swap_chain.h"
 #include "core/ethereal_window.h"
 
 //std
@@ -17,7 +18,6 @@
 namespace ethereal {
 
 	class EtherealRenderer {
-
 	public:
 		EtherealRenderer(EtherealWindow& window, EtherealDevice& device);
 		~EtherealRenderer();

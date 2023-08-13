@@ -16,14 +16,12 @@ namespace ethereal {
 
 	struct DefferedRenderer {
 		DefferedRenderer(EtherealRenderer& renderer);
-		DefferedRenderer() = delete;
-		~DefferedRenderer();
+		~DefferedRenderer() {}
 		DefferedRenderer(const DefferedRenderer&) = delete;
 		DefferedRenderer& operator=(const DefferedRenderer&) = delete;
 		DefferedRenderer(DefferedRenderer&&) = delete;
 		DefferedRenderer& operator=(DefferedRenderer&&) = delete;
-		//TODO: properly init renderer
-		void initDefferedPart();
+		void init();
 		void beginFrameDeffered();
 		void endFrameDeffered();
 		void beginSwapChainRenderPassDeffered();

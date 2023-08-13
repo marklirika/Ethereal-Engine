@@ -412,12 +412,11 @@ namespace ethereal {
       }
     }
 
-    void EtherealSwapChain::createAttachment(VkFormat format, VkImageUsageFlagBits usage, FrameBufferAttachment* attachment)
-    {
+    void EtherealSwapChain::createAttachment(VkFormat format, VkImageUsageFlagBits usage, FrameBufferAttachment& attachment) {
         VkImageAspectFlags aspectMask = 0;
         VkImageLayout imageLayout;
 
-        attachment->format = format;
+        attachment.format = format;
 
         if (usage & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
         {
@@ -436,6 +435,7 @@ namespace ethereal {
         assert(aspectMask > 0 && "Aspect Mask > 0");
 
         VkImageCreateInfo image{};
+        image.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         image.imageType = VK_IMAGE_TYPE_2D;
         image.format = format;
         image.extent.width = getSwapChainExtent().width;
@@ -448,20 +448,27 @@ namespace ethereal {
         image.usage = usage | VK_IMAGE_USAGE_SAMPLED_BIT;
 
         VkMemoryAllocateInfo memAlloc{};
+        memAlloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         VkMemoryRequirements memReqs;
 
-        if (vkCreateImage(etherealDevice.device(), &image, nullptr, &attachment->image) != VK_SUCCESS) {
+        if (vkCreateImage(etherealDevice.device(), &image, nullptr, &attachment.image) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create attachment image!");
         }
 
-        vkGetImageMemoryRequirements(etherealDevice.device(), attachment->image, &memReqs);
+        vkGetImageMemoryRequirements(etherealDevice.device(), attachment.image, &memReqs);
         memAlloc.allocationSize = memReqs.size;
         memAlloc.memoryTypeIndex = etherealDevice.findMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-        assert(vkAllocateMemory(etherealDevice.device(), &memAlloc, nullptr, &attachment->mem) && "failed to alloc memory");
-        assert(vkBindImageMemory(etherealDevice.device(), attachment->image, attachment->mem, 0) && "failed to bind memory");
+        if (vkAllocateMemory(etherealDevice.device(), &memAlloc, nullptr, &attachment.mem) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to allocate attachment image memory!");
+		}
+
+        if (vkBindImageMemory(etherealDevice.device(), attachment.image, attachment.mem, 0) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to bind attachment image memory!");
+        }
 
         VkImageViewCreateInfo imageView{};
+        imageView.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         imageView.viewType = VK_IMAGE_VIEW_TYPE_2D;
         imageView.format = format;
         imageView.subresourceRange = {};
@@ -470,9 +477,9 @@ namespace ethereal {
         imageView.subresourceRange.levelCount = 1;
         imageView.subresourceRange.baseArrayLayer = 0;
         imageView.subresourceRange.layerCount = 1;
-        imageView.image = attachment->image;
+        imageView.image = attachment.image;
 
-        if (vkCreateImageView(etherealDevice.device(), &imageView, nullptr, &attachment->view) != VK_SUCCESS) {
+        if (vkCreateImageView(etherealDevice.device(), &imageView, nullptr, &attachment.view) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture image view!");
         }
     }

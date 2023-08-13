@@ -1,5 +1,6 @@
 #pragma once
 #include "core/ethereal_device.h"
+#include "memory/ethereal_frame_info.h"
 
 // vulkan headers
 #include <vulkan/vulkan.h>
@@ -19,12 +20,7 @@
 
 namespace ethereal {
 
-    struct FrameBufferAttachment {
-        VkImage image;
-        VkDeviceMemory mem;
-        VkImageView view;
-        VkFormat format;
-    };
+    class DefferedSwapChain;
 
     class EtherealSwapChain {
     public:
@@ -49,12 +45,12 @@ namespace ethereal {
         float extentAspectRatio() {
             return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
         }
-        
+
         VkFormat findDepthFormat();
         void createAttachment(
             VkFormat format,
             VkImageUsageFlagBits usage,
-            FrameBufferAttachment* attachment);
+            FrameBufferAttachment& attachment);
 
         VkResult acquireNextImage(uint32_t* imageIndex);
         VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);

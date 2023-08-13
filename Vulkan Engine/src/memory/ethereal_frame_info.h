@@ -21,7 +21,7 @@ namespace ethereal {
 		int numLights;
 	};
 
-	struct OffscreenFrameBufferAttachment {
+	struct FrameBufferAttachment {
 		VkImage image;
 		VkDeviceMemory mem;
 		VkImageView view;
@@ -31,11 +31,10 @@ namespace ethereal {
 	struct OffscreenFrameBuffer {
 		int32_t width, height;
 		VkFramebuffer frameBuffer;
-		OffscreenFrameBufferAttachment position, normal, albedo;
-		OffscreenFrameBufferAttachment depth;
+		FrameBufferAttachment position, normal, albedo;
+		FrameBufferAttachment depth;
 		VkRenderPass renderPass;
 	};
-
 
 	struct FrameInfo {
 		int frameIndex;

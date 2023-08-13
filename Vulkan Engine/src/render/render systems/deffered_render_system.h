@@ -29,9 +29,9 @@ namespace ethereal {
 
 		DefferedRenderSystem(const DefferedRenderSystem&) = delete;
 		DefferedRenderSystem& operator=(const DefferedRenderSystem&) = delete;
+
 		void bind(std::shared_ptr<EtherealModel> model,	std::shared_ptr<EtherealTexture> texture, FrameInfo& frameInfo);
 		void draw(FrameInfo& frameInfo, std::shared_ptr<EtherealModel> model);
-
 		void render(FrameInfo& frameInfo);
 	private:
 		void writeCmpDescriptors(OffscreenFrameBuffer& offscreenFrmBuffer,

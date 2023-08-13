@@ -1,8 +1,12 @@
 #include "render/deffered rendering/deffered_renderer.h"
 
 namespace ethereal {
+	DefferedRenderer::DefferedRenderer(EtherealRenderer& renderer) : renderer{ renderer } {
+		defferedSwapChain = std::make_unique<DefferedSwapChain>(renderer.etherealSwapChain);
+		init();
+	}
 
-	void DefferedRenderer::initDefferedPart() {
+	void DefferedRenderer::init() {
 		if (offscreenCmdBuffer == VK_NULL_HANDLE) {
 			VkCommandBufferAllocateInfo allocInfo{};
 			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;

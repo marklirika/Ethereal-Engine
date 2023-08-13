@@ -2,47 +2,42 @@
 
 namespace ethereal {
 	
-	DefferedSwapChain::DefferedSwapChain(std::unique_ptr<EtherealSwapChain>& swapChain) : etherealSwapChain{swapChain} {
+	DefferedSwapChain::DefferedSwapChain(std::unique_ptr<EtherealSwapChain>& swapChain)
+		: etherealSwapChain{ swapChain } {
 		createDefferedRenderPass();
 		writeDefferedFrmBuffer();
 		createColorSampler();
+		createSemaphore();
 	}
 
 	void DefferedSwapChain::createDefferedRenderPass() {
 		offscreenFrmBuffer.width = etherealSwapChain->swapChainExtent.width;
 		offscreenFrmBuffer.height = etherealSwapChain->swapChainExtent.height;
 
-		// Color attachments
-		FrameBufferAttachment position{};
-		FrameBufferAttachment normal{};
-		FrameBufferAttachment albedo{};
-
 		// (World space) Positions
 		etherealSwapChain->createAttachment(
-			VK_FORMAT_R16G16B16A16_SFLOAT,
-			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-			&position);
+			VK_FORMAT_R16G16B16A16_SFLOAT, 
+			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
+			offscreenFrmBuffer.position);
 
 		// (World space) Normals
 		etherealSwapChain->createAttachment(
 			VK_FORMAT_R16G16B16A16_SFLOAT,
 			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-			&normal);
+			offscreenFrmBuffer.normal);
 
 		// Albedo (color)
 		etherealSwapChain->createAttachment(
 			VK_FORMAT_R8G8B8A8_UNORM,
 			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-			&albedo);
+			offscreenFrmBuffer.albedo);
 
 		// Depth attachment
-		FrameBufferAttachment depth{};
 		VkFormat depthFormat = etherealSwapChain->findDepthFormat();
-
 		etherealSwapChain->createAttachment(
 			depthFormat,
 			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-			&depth);
+			offscreenFrmBuffer.depth);
 
 		// Set up separate renderpass with references to the color and depth attachments
 		std::array<VkAttachmentDescription, 4> attachmentDescs = {};
@@ -67,10 +62,10 @@ namespace ethereal {
 		}
 
 		// Formats
-		attachmentDescs[0].format = position.format;
-		attachmentDescs[1].format = normal.format;
-		attachmentDescs[2].format = albedo.format;
-		attachmentDescs[3].format = depth.format;
+		attachmentDescs[0].format = offscreenFrmBuffer.position.format;
+		attachmentDescs[1].format = offscreenFrmBuffer.normal.format;
+		attachmentDescs[2].format = offscreenFrmBuffer.albedo.format;
+		attachmentDescs[3].format = offscreenFrmBuffer.depth.format;
 
 		std::vector<VkAttachmentReference> colorReferences;
 		colorReferences.push_back({ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL });
@@ -131,12 +126,12 @@ namespace ethereal {
 		attachments[2] = offscreenFrmBuffer.albedo.view;
 		attachments[3] = offscreenFrmBuffer.depth.view;
 
-		VkFramebufferCreateInfo fbufCreateInfo = {};
+		VkFramebufferCreateInfo fbufCreateInfo{};
 		fbufCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		fbufCreateInfo.pNext = NULL;
 		fbufCreateInfo.renderPass = offscreenFrmBuffer.renderPass;
 		fbufCreateInfo.pAttachments = attachments.data();
-		fbufCreateInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+ 		fbufCreateInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 		fbufCreateInfo.width = offscreenFrmBuffer.width;
 		fbufCreateInfo.height = offscreenFrmBuffer.height;
 		fbufCreateInfo.layers = 1;
