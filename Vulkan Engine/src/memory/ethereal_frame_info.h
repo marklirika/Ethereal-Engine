@@ -5,7 +5,7 @@
 #include <vulkan/vulkan.h>
 
 namespace ethereal {
-	constexpr int MAX_LIGHTS = 10;
+	constexpr int MAX_LIGHTS = 50;
 
 	struct PointLight {
 		glm::vec4 position{};  // w = 1.0
@@ -20,7 +20,7 @@ namespace ethereal {
 		PointLight lightPoints[MAX_LIGHTS];
 		int numLights;
 	};
-
+	
 	struct FrameBufferAttachment {
 		VkImage image;
 		VkDeviceMemory mem;
@@ -28,20 +28,28 @@ namespace ethereal {
 		VkFormat format;
 	};
 
-	struct OffscreenFrameBuffer {
-		int32_t width, height;
-		VkFramebuffer frameBuffer;
-		FrameBufferAttachment position, normal, albedo;
-		FrameBufferAttachment depth;
-		VkRenderPass renderPass;
+	//Deffered Shading part
+	//************************************************
+
+	struct OffscreenUBO {
+		glm::mat4 projection{ 1.f };
+		glm::mat4 view{ 1.f };
+		glm::mat4 inverseView{ 1.f };
 	};
 
+	struct CompositionUBO {
+		glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, .02f };
+		PointLight lightPoints[MAX_LIGHTS];
+		int numLights;
+	};
+
+	//************************************************
+	//Defferd Shading part
 	struct FrameInfo {
 		int frameIndex;
 		float frameTime;
 		VkCommandBuffer offscreenCmdBuffer;
 		VkCommandBuffer commandBuffer;
-		OffscreenFrameBuffer& offscreenFrmBuffer;
 		VkDescriptorSet globaDescriptorSet;
 		EtherealCamera& camera;
 		Scene& scene;

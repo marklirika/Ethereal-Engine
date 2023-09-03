@@ -16,7 +16,6 @@ namespace ethereal {
         VkSampler getSampler() { return sampler; }
         VkImageView getImageView() { return imageView; }
         VkImageLayout getImageLayout() { return imageLayout; }
-
         std::vector<VkDescriptorSet> getDescriptorSets() { return descriptorSets; }
     private:
         void writeDescriptors();

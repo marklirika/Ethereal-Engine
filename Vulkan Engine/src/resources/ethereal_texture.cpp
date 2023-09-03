@@ -11,6 +11,7 @@
 #include <cmath>
 
 namespace ethereal {
+
     EtherealTexture::EtherealTexture(EtherealDevice& device, const std::string& filepath) : etherealDevice{ device } {
         int channels;
         int m_BytesPerPixel;

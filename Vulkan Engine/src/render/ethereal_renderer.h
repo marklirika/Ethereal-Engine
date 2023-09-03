@@ -14,10 +14,30 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#define DEFFERED_MODE
 
 namespace ethereal {
-
 	class EtherealRenderer {
+#ifndef DEFFERED_MODE
+		using SwapChain = EtherealSwapChain;
+#else
+		using SwapChain = DefferedSwapChain;
+	public:
+		void beginSwapChainRenderPass(VkCommandBuffer offscreenCmdBuffer, VkCommandBuffer commandBuffer);
+		void endSwapChainRenderPass(VkCommandBuffer offscreenCmdBuffer, VkCommandBuffer commandBuffer);
+
+		VkCommandBuffer getCurrentOffscreenCmdBuffer() const {
+			assert(isFrameStarted && "Cannot get commandbuffer while frame not in progress");
+			return offscreenCmdBuffers[currentFrameIndex];
+		}
+		OffscreenFrameBuffer& getOffscreenFrameBuffer() { return etherealSwapChain->getOffscreenFrameBuffer(); }
+	private:
+		void createOffscreenCmdBuffers();
+		void freeOffscreenCmdBuffers();
+		void beginOffscreenFrame();
+		void endOffscreenFrame();
+		std::vector<VkCommandBuffer> offscreenCmdBuffers;
+#endif
 	public:
 		EtherealRenderer(EtherealWindow& window, EtherealDevice& device);
 		~EtherealRenderer();
@@ -50,12 +70,12 @@ namespace ethereal {
 		 
 		EtherealWindow& etherealWindow;
 		EtherealDevice& etherealDevice;
-		std::unique_ptr<EtherealSwapChain> etherealSwapChain;
+		std::unique_ptr<SwapChain> etherealSwapChain;
 		std::vector<VkCommandBuffer> commandBuffers;
 
 		uint32_t currentImageIndex;
 		int currentFrameIndex;
 		bool isFrameStarted;
-		friend class DefferedRenderer;
+
 	};
 }

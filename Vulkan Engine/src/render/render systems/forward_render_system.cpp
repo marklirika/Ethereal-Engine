@@ -12,7 +12,7 @@
 
 namespace ethereal {
 
-	struct SimplePushConstantData {
+	struct ModelData {
 		glm::mat4 modelMatrix{ 1.f };
 		glm::mat4 normalMatrix{ 1.f };
 	};
@@ -28,14 +28,14 @@ namespace ethereal {
 	}
 
 	void ForwardRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
+		auto imageLayout = EtherealDescriptorSetLayout::Builder(etherealDevice)
+			.addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+			.build();
+
 		VkPushConstantRange pushConstantRange{};
 		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		pushConstantRange.offset = 0;
-		pushConstantRange.size = sizeof(SimplePushConstantData);
-
-		std::unique_ptr<EtherealDescriptorSetLayout> imageLayout = EtherealDescriptorSetLayout::Builder(etherealDevice)
-			.addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-			.build();
+		pushConstantRange.size = sizeof(ModelData);
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts { globalSetLayout, imageLayout->getDescriptorSetLayout() };
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
@@ -109,7 +109,7 @@ namespace ethereal {
 			auto& mesh = view.get<MeshComponent>(entity);
 			auto& texture = view.get<TextureComponent>(entity);
 			auto& transform = view.get<TransformComponent>(entity);
-			SimplePushConstantData push{};
+			ModelData push{};
 			push.modelMatrix = transform.mat4();
 			push.normalMatrix = transform.normalMatrix();
 
@@ -117,7 +117,7 @@ namespace ethereal {
 				pipelineLayout,
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 				0,
-				sizeof(SimplePushConstantData),
+				sizeof(ModelData),
 				&push);
 
 			bind(mesh.model, texture.texture, frameInfo);

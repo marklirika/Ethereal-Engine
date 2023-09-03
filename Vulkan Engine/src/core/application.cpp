@@ -45,37 +45,58 @@ namespace ethereal {
 
 	void Application::run() {
 		//creating ubo buffers
-		std::vector<std::unique_ptr<EtherealBuffer>> uboBuffers(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT);
-		for (int i = 0; i < uboBuffers.size(); i++) {
-			uboBuffers[i] = std::make_unique<EtherealBuffer>(
+		struct DefferedUniformBuffer {
+			std::vector<std::unique_ptr<EtherealBuffer>> offscreen{ EtherealSwapChain::MAX_FRAMES_IN_FLIGHT };
+			std::vector<std::unique_ptr<EtherealBuffer>> composition{ EtherealSwapChain::MAX_FRAMES_IN_FLIGHT };
+		} uboBuffers;
+		//setting offscreen ubo buffers
+		for (int i = 0; i < uboBuffers.offscreen.size(); i++) {
+			uboBuffers.offscreen[i] = std::make_unique<EtherealBuffer>(
 				etherealDevice,
-				sizeof(GlobalUBO),
+				sizeof(OffscreenUBO),
 				1,
 				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-			uboBuffers[i]->map();
-		} 
+			uboBuffers.offscreen[i]->map();
+		}
+		//setting composition ubo buffers
+		for (int i = 0; i < uboBuffers.composition.size(); i++) {
+			uboBuffers.composition[i] = std::make_unique<EtherealBuffer>(
+				etherealDevice,
+				sizeof(CompositionUBO),
+				1,
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+			uboBuffers.composition[i]->map();
+		}
 
 		//setting descriptors global set layout
 		auto globalSetLayout = EtherealDescriptorSetLayout::Builder(etherealDevice)
-			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
+			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+			.addBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT)
 			.build(); 
 
 		//setting descriptors global sets
 		std::vector<VkDescriptorSet> globalDescriptorSets(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < globalDescriptorSets.size(); i++) {
-			auto bufferInfo = uboBuffers[i]->descriptorInfo();
+			auto offscreenBufferInfo = uboBuffers.offscreen[i]->descriptorInfo();
+			auto compositionBufferInfo = uboBuffers.composition[i]->descriptorInfo();
 			EtherealDescriptorWriter(*globalSetLayout, *globalPool)
-				.writeBuffer(0, &bufferInfo)
+				.writeBuffer(0, &offscreenBufferInfo)
+				.writeBuffer(1, &compositionBufferInfo)
 				.build(globalDescriptorSets[i]);
 		}
 
 		//setting systems
 		ForwardRenderSystem forwardRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
-		//DefferedRenderSystem defferedRenderSystem{};
+		//DefferedRenderSystem defferedRenderSystem{ etherealDevice, 
+		//	etherealRenderer.getOffscreenFrameBuffer(),
+		//	etherealRenderer.getSwapChainRenderPass(), 
+		//	globalSetLayout->getDescriptorSetLayout() 
+		//};
 		PointLightRenderSystem lightPointRenderSystem{ etherealDevice, etherealRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
-		UnitGenSystem unitGenSystem{ etherealDevice };
 
+		UnitGenSystem unitGenSystem{ etherealDevice };
 		//setting camera
 		EtherealCamera camera{};
         camera.setViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
@@ -107,16 +128,16 @@ namespace ethereal {
             camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 1000.f);
 			
 			if (auto commandBuffer = etherealRenderer.beginFrame()) {
+				auto offscreenCmd = etherealRenderer.getCurrentOffscreenCmdBuffer();
 				std::size_t size = scene.getRegistry().size();
 				int frameIndex = etherealRenderer.getFrameIndex();
 				//index, time, offscreenCmd, composeCmd, offscreenFrm, globalDS, cameran, scene
-				OffscreenFrameBuffer testFrm;
+				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				FrameInfo frameInfo { 
 					frameIndex, 
 					frameTime, 
-					VK_NULL_HANDLE, 
-					commandBuffer, 
-					testFrm, 
+					offscreenCmd,
+					commandBuffer,
 					globalDescriptorSets[frameIndex], 
 					camera, 
 					scene
@@ -130,42 +151,41 @@ namespace ethereal {
 				lightPointRenderSystem.update(frameInfo, ubo);
 				uboBuffers[frameIndex]->writeToBuffer(&ubo);
 				uboBuffers[frameIndex]->flush();
-				unitGenSystem.generate(frameInfo);
-				AudioSystem::update(frameInfo);
 				//render
-				etherealRenderer.beginSwapChainRenderPass(commandBuffer);
+				etherealRenderer.beginSwapChainRenderPass(offscreenCmd, commandBuffer);
 				forwardRenderSystem.render(frameInfo);
+				//defferedRenderSystem.render(frameInfo);
 				lightPointRenderSystem.render(frameInfo);
-				etherealRenderer.endSwapChainRenderPass(commandBuffer);
+				etherealRenderer.endSwapChainRenderPass(offscreenCmd, commandBuffer);
 				etherealRenderer.endFrame();
 			}
 		}
 
 		auto result = vkDeviceWaitIdle(etherealDevice.device());
-		if(!result){
+		if(!result) {
 			throw std::runtime_error("failed to wait device idle");
 		}
 	}
 
 	void Application::loadEntities() {
 		
-		////sound system
-		//auto musicPlayer = scene.createEntity("music_player");
-		//auto& audio = musicPlayer.addComponent<AudioComponent>();
-		//audio.type = AudioComponent::AudioType::MUSIC_TRACK;
-		//AudioSystem::init();
-		//AudioSystem::load(audio, "audio/music/boat.mp3");
-		//AudioSystem::play(audio);
+		//sound system
+		auto musicPlayer = scene.createEntity("music_player");
+		auto& audio = musicPlayer.addComponent<AudioComponent>();
+		audio.type = AudioComponent::AudioType::MUSIC_TRACK;
+		AudioSystem::init();
+		AudioSystem::load(audio, "audio/music/boat.mp3");
+		AudioSystem::play(audio);
 
-		////terrain
-		//std::shared_ptr<EtherealModel> terrainModel = 
-		//	Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
-		//auto terrain = scene.createEntity("terrain");
-		//auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
-		//auto& terrainTransform = terrain.getComponent<TransformComponent>();
-		//terrainTransform.scale = { 0.5f,0.5f,0.5f };
-		//terrainTransform.translation = { -100.f, 0.f, -100.f };
-		//terrainTransform.rotation += glm::radians(90.0f);
+		//terrain
+		std::shared_ptr<EtherealModel> terrainModel = 
+			Frogs_Empire::Terrain::generateTerrain(this->etherealDevice, { 1024, 1024 }, { 1, 1 });
+		auto terrain = scene.createEntity("terrain");
+		auto& terrainMesh = terrain.addComponent<MeshComponent>(terrainModel);
+		auto& terrainTransform = terrain.getComponent<TransformComponent>();
+		terrainTransform.scale = { 0.5f,0.5f,0.5f };
+		terrainTransform.translation = { -100.f, 0.f, -100.f };
+		terrainTransform.rotation += glm::radians(90.0f);
 
 		//frog + light below
 		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/frog_1.obj");		

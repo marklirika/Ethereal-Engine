@@ -3,23 +3,31 @@
 
 namespace ethereal {
 
-	class DefferedSwapChain {
+	struct OffscreenFrameBuffer {
+		int32_t width, height;
+		VkFramebuffer frameBuffer;
+		FrameBufferAttachment position, normal, albedo;
+		FrameBufferAttachment depth;
+		VkRenderPass renderPass;
+	};
+
+	class DefferedSwapChain : public EtherealSwapChain {
 	public:
-    	DefferedSwapChain(std::unique_ptr<EtherealSwapChain>& swapChain);
+    	DefferedSwapChain(EtherealDevice& device, VkExtent2D windowExtent);
+		DefferedSwapChain(EtherealDevice& device, VkExtent2D windowExtent, std::shared_ptr<EtherealSwapChain> previous);
 		~DefferedSwapChain() {}
-		DefferedSwapChain() = delete;
+
 		DefferedSwapChain(const DefferedSwapChain& swapChain) = delete;
 		DefferedSwapChain& operator=(const DefferedSwapChain& swapChain) = delete;
 
-		VkSampler colorSampler;
+		OffscreenFrameBuffer& getOffscreenFrameBuffer() { return offscreenFrmBuffer; }
+	private:
+		void createOffscreenRenderPass();
+		void writeOffscreenFrmBuffer();
+		void createOffscreenSemaphores();		
+
 		VkSemaphore offscreenSemaphore = VK_NULL_HANDLE;
 		OffscreenFrameBuffer offscreenFrmBuffer;
-		std::unique_ptr<EtherealSwapChain>& etherealSwapChain;
-	private:
-		void createDefferedRenderPass();
-		void writeDefferedFrmBuffer();
-		void createColorSampler();
-		void createSemaphore();
 	};
 
 } // namespace etheral

@@ -7,7 +7,12 @@ namespace ethereal {
 		createCommandBuffers();
 	}
 
-	EtherealRenderer::~EtherealRenderer() { freeCommandBuffers(); }
+	EtherealRenderer::~EtherealRenderer() { 
+		freeCommandBuffers(); 
+#ifdef DEFFERED_MODE
+		freeOffscreenCmdBuffers();
+#endif
+	}
 
 	void EtherealRenderer::recreateSwapChain() {
 		auto extent = etherealWindow.getExtent();
@@ -19,10 +24,11 @@ namespace ethereal {
 		etherealSwapChain = nullptr;
 
 		if (etherealSwapChain == nullptr) {
-			etherealSwapChain = std::make_unique<EtherealSwapChain>(etherealDevice, extent);
-		} else {
-			std::shared_ptr<EtherealSwapChain> oldSwapChain = std::move(etherealSwapChain);
-			etherealSwapChain = std::make_unique<EtherealSwapChain>(etherealDevice, extent, oldSwapChain);
+			etherealSwapChain = std::make_unique<SwapChain>(etherealDevice, extent);
+		} 
+		else {
+			std::shared_ptr<SwapChain> oldSwapChain = std::move(etherealSwapChain);
+			etherealSwapChain = std::make_unique<SwapChain>(etherealDevice, extent, oldSwapChain);
 
 			if (!oldSwapChain->compareSwapFormats(*etherealSwapChain.get())) {
 				throw std::runtime_error("SwapChainImageFormat has changed");
@@ -31,7 +37,7 @@ namespace ethereal {
 	}
 
 	void EtherealRenderer::createCommandBuffers() {
-		commandBuffers.resize(EtherealSwapChain::MAX_FRAMES_IN_FLIGHT);
+		commandBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -90,7 +96,7 @@ namespace ethereal {
 		}
 
 		isFrameStarted = false;
-		currentFrameIndex = (currentFrameIndex + 1) % EtherealSwapChain::MAX_FRAMES_IN_FLIGHT;
+		currentFrameIndex = (currentFrameIndex + 1) % SwapChain::MAX_FRAMES_IN_FLIGHT;
 		
 	}
 
@@ -131,4 +137,80 @@ namespace ethereal {
 		vkCmdEndRenderPass(commandBuffer);
 	}
 
+#ifdef DEFFERED_MODE
+	void EtherealRenderer::freeOffscreenCmdBuffers() {
+		vkFreeCommandBuffers(etherealDevice.device(), etherealDevice.getCommandPool(), static_cast<uint32_t>(offscreenCmdBuffers.size()), offscreenCmdBuffers.data());
+		offscreenCmdBuffers.clear();
+	}
+
+	void EtherealRenderer::createOffscreenCmdBuffers() {
+		offscreenCmdBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool = etherealDevice.getCommandPool();
+		allocInfo.commandBufferCount = static_cast<uint32_t>(offscreenCmdBuffers.size());
+
+		if (vkAllocateCommandBuffers(etherealDevice.device(), &allocInfo, offscreenCmdBuffers.data()) != VK_SUCCESS) {
+			throw std::runtime_error("failed to allocate command buffers!");
+		}
+	}
+
+	void EtherealRenderer::beginOffscreenFrame() {
+		auto offscreenCmdBuffer = getCurrentOffscreenCmdBuffer();
+		VkCommandBufferBeginInfo cmdBufferBeginInfo{};
+		cmdBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+		if (vkBeginCommandBuffer(offscreenCmdBuffer, &cmdBufferBeginInfo) != VK_SUCCESS) {
+			throw std::runtime_error("frailed to begin offscreenCMDBuffer");
+		}
+	}
+
+	void EtherealRenderer::endOffscreenFrame() {
+		auto offscreenCmdBuffer = getCurrentOffscreenCmdBuffer();
+		if (vkEndCommandBuffer(offscreenCmdBuffer) != VK_SUCCESS) {
+			throw std::runtime_error("failed to record buffer!");
+		}
+	}
+	void EtherealRenderer::beginSwapChainRenderPass(VkCommandBuffer offscreenCmdBuffer, VkCommandBuffer commandBuffer) {
+		// Clear values for all attachments written in the fragment shader
+		std::array<VkClearValue, 4> clearValues;
+		clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+		clearValues[1].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+		clearValues[2].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+		clearValues[3].depthStencil = { 1.0f, 0 };
+		auto& offscreenFrameBuffer = etherealSwapChain->getOffscreenFrameBuffer();
+		VkRenderPassBeginInfo renderPassBeginInfo{};
+		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassBeginInfo.renderPass = offscreenFrameBuffer.renderPass;
+		renderPassBeginInfo.framebuffer = offscreenFrameBuffer.frameBuffer;
+		renderPassBeginInfo.renderArea.extent.width = offscreenFrameBuffer.width;
+		renderPassBeginInfo.renderArea.extent.height = offscreenFrameBuffer.height;
+		renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		renderPassBeginInfo.pClearValues = clearValues.data();
+
+		vkCmdBeginRenderPass(offscreenCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+		VkViewport viewport{};
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.width = static_cast<float>(offscreenFrameBuffer.width);
+		viewport.height = static_cast<float>(offscreenFrameBuffer.height);
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+
+		VkRect2D scissor{
+			{0, 0},
+			{ offscreenFrameBuffer.width, offscreenFrameBuffer.height }
+		};
+		vkCmdSetViewport(offscreenCmdBuffer, 0, 1, &viewport);
+		vkCmdSetScissor(offscreenCmdBuffer, 0, 1, &scissor);
+		beginSwapChainRenderPass(commandBuffer);
+	}
+
+	void EtherealRenderer::endSwapChainRenderPass(VkCommandBuffer offscreenCmdBuffer, VkCommandBuffer commandBuffer) {
+		vkCmdEndRenderPass(offscreenCmdBuffer);
+		endSwapChainRenderPass(commandBuffer);
+	}
+#endif
 }

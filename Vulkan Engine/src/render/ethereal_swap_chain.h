@@ -20,8 +20,6 @@
 
 namespace ethereal {
 
-    class DefferedSwapChain;
-
     class EtherealSwapChain {
     public:
         static constexpr int MAX_FRAMES_IN_FLIGHT = 2;

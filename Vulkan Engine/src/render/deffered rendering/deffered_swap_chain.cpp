@@ -2,39 +2,45 @@
 
 namespace ethereal {
 	
-	DefferedSwapChain::DefferedSwapChain(std::unique_ptr<EtherealSwapChain>& swapChain)
-		: etherealSwapChain{ swapChain } {
-		createDefferedRenderPass();
-		writeDefferedFrmBuffer();
-		createColorSampler();
-		createSemaphore();
+	DefferedSwapChain::DefferedSwapChain(EtherealDevice& device, VkExtent2D windowExtent) 
+		: EtherealSwapChain(device, windowExtent) {
+		createOffscreenRenderPass();
+		writeOffscreenFrmBuffer();
+		createOffscreenSemaphores();
 	}
 
-	void DefferedSwapChain::createDefferedRenderPass() {
-		offscreenFrmBuffer.width = etherealSwapChain->swapChainExtent.width;
-		offscreenFrmBuffer.height = etherealSwapChain->swapChainExtent.height;
+	DefferedSwapChain::DefferedSwapChain(EtherealDevice& device, VkExtent2D windowExtent, std::shared_ptr<EtherealSwapChain> previous)
+		: EtherealSwapChain(device, windowExtent, previous) {
+		createOffscreenRenderPass();
+		writeOffscreenFrmBuffer();
+		createOffscreenSemaphores();
+	}
+
+	void DefferedSwapChain::createOffscreenRenderPass() {
+		offscreenFrmBuffer.width = swapChainExtent.width;
+		offscreenFrmBuffer.height = swapChainExtent.height;
 
 		// (World space) Positions
-		etherealSwapChain->createAttachment(
+		createAttachment(
 			VK_FORMAT_R16G16B16A16_SFLOAT, 
 			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
 			offscreenFrmBuffer.position);
 
 		// (World space) Normals
-		etherealSwapChain->createAttachment(
+		createAttachment(
 			VK_FORMAT_R16G16B16A16_SFLOAT,
 			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
 			offscreenFrmBuffer.normal);
 
 		// Albedo (color)
-		etherealSwapChain->createAttachment(
+		createAttachment(
 			VK_FORMAT_R8G8B8A8_UNORM,
 			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
 			offscreenFrmBuffer.albedo);
 
 		// Depth attachment
-		VkFormat depthFormat = etherealSwapChain->findDepthFormat();
-		etherealSwapChain->createAttachment(
+		VkFormat depthFormat = findDepthFormat();
+		createAttachment(
 			depthFormat,
 			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 			offscreenFrmBuffer.depth);
@@ -111,7 +117,7 @@ namespace ethereal {
 		renderPassInfo.dependencyCount = 2;
 		renderPassInfo.pDependencies = dependencies.data();
 
-		if (vkCreateRenderPass(etherealSwapChain->etherealDevice.device(),
+		if (vkCreateRenderPass(etherealDevice.device(),
 			&renderPassInfo, 
 			nullptr, 
 			&offscreenFrmBuffer.renderPass) != VK_SUCCESS) {
@@ -119,7 +125,7 @@ namespace ethereal {
 		}
 	}
 
-	void DefferedSwapChain::writeDefferedFrmBuffer() {
+	void DefferedSwapChain::writeOffscreenFrmBuffer() {
 		std::array<VkImageView, 4> attachments;
 		attachments[0] = offscreenFrmBuffer.position.view;
 		attachments[1] = offscreenFrmBuffer.normal.view;
@@ -135,7 +141,7 @@ namespace ethereal {
 		fbufCreateInfo.width = offscreenFrmBuffer.width;
 		fbufCreateInfo.height = offscreenFrmBuffer.height;
 		fbufCreateInfo.layers = 1;
-		if (vkCreateFramebuffer(etherealSwapChain->etherealDevice.device(),
+		if (vkCreateFramebuffer(etherealDevice.device(),
 			&fbufCreateInfo,
 			nullptr,
 			&offscreenFrmBuffer.frameBuffer) != VK_SUCCESS) {
@@ -143,29 +149,10 @@ namespace ethereal {
 		}
 	}
 
-	void DefferedSwapChain::createColorSampler() {
-		VkSamplerCreateInfo sampler{};
-	    sampler.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		sampler.magFilter = VK_FILTER_NEAREST;
-		sampler.minFilter = VK_FILTER_NEAREST;
-		sampler.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-		sampler.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		sampler.addressModeV = sampler.addressModeU;
-		sampler.addressModeW = sampler.addressModeU;
-		sampler.mipLodBias = 0.0f;
-		sampler.maxAnisotropy = 1.0f;
-		sampler.minLod = 0.0f;
-		sampler.maxLod = 1.0f;
-		sampler.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
-		if (vkCreateSampler(etherealSwapChain->etherealDevice.device(), &sampler, nullptr, &colorSampler)) {
-			throw std::runtime_error("failed to create color sampler !");
-		}
-	}
-
-	void DefferedSwapChain::createSemaphore() {
+	void DefferedSwapChain::createOffscreenSemaphores() {
 		VkSemaphoreCreateInfo semaphoreCreateInfo{};
 		semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-		if (vkCreateSemaphore(etherealSwapChain->etherealDevice.device(), &semaphoreCreateInfo, nullptr, &offscreenSemaphore) != VK_SUCCESS) {
+		if (vkCreateSemaphore(etherealDevice.device(), &semaphoreCreateInfo, nullptr, &offscreenSemaphore) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create offscreen semaphore");
 		}
 	}

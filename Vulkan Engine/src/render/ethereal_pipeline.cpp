@@ -32,7 +32,7 @@ namespace ethereal {
 		return buffer;
 	}
 
-	void EtherealPipeline::createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath,const PipelineConfigInfo& configInfo) {
+	void EtherealPipeline::createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& configInfo) {
 		assert(configInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipelineLayout provided in configInfo");
 		assert(configInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics renderPass provided in configInfo");
 
