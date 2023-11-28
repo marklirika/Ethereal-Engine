@@ -189,17 +189,17 @@ namespace ethereal {
 		terrainTransform.rotation += glm::radians(90.0f);
 
 		//frog + light below
-		std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/16433_Pig.obj");		
-		auto frog = scene.createEntity("frog");
-		auto& frogmesh = frog.addComponent<MeshComponent>(etherealModel);
-		auto& frogtransfrom = frog.getComponent<TransformComponent>();
-		auto& frogmovement = frog.addComponent<MovementComponent>();
-		frogtransfrom.translation = { 0.f, 0.f, 0.f };
-		frogtransfrom.scale = { 1, 1, 1 };
-		//frogtransfrom.rotation += glm::radians(90.0f);
-		frogmovement.speed = 1;
-		frogmovement.destination = {10, 0, 10};
-		frogmovement.isMoving = true;
+		//std::shared_ptr<EtherealModel> etherealModel = EtherealModel::createModelFromFile(etherealDevice, "models/16433_Pig.obj");		
+		//auto frog = scene.createEntity("frog");
+		//auto& frogmesh = frog.addComponent<MeshComponent>(etherealModel);
+		//auto& frogtransfrom = frog.getComponent<TransformComponent>();
+		//auto& frogmovement = frog.addComponent<MovementComponent>();
+		//frogtransfrom.translation = { 0.f, 0.f, 0.f };
+		//frogtransfrom.scale = { 1, 1, 1 };
+		////frogtransfrom.rotation += glm::radians(90.0f);
+		//frogmovement.speed = 1;
+		//frogmovement.destination = {10, 0, 10};
+		//frogmovement.isMoving = true;
 
 		std::vector<glm::vec3> lightColors {
 			{1.f, .1f, .1f},

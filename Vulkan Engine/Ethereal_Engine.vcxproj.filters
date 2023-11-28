@@ -25,9 +25,6 @@
     <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\Frog's Empire\terrain\terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\Frog's Empire\units\collision_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\core\application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,5 +78,8 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{7FD4742A-28A5-352B-A1B8-B445DDE884F2}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Frog%27s Empire\units\unit_component.h" />
   </ItemGroup>
 </Project>

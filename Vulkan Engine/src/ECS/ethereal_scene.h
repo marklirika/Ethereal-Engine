@@ -3,15 +3,15 @@
 
 namespace ethereal {
 
-	// At first you create scene and then you create entities in it 
 	class Entity;
 
-	class Scene	{
-		public:
+	class Scene {
+	public:
 		Scene();
 		~Scene();
 
 		Entity createEntity(const std::string& name);
+		void removeEntity(Entity entity);  
 
 		entt::registry& getRegistry() { return _registry; }
 
@@ -20,5 +20,5 @@ namespace ethereal {
 
 		friend class Entity;
 	};
-}
 
+}

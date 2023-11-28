@@ -10,6 +10,23 @@ namespace ethereal {
 		Entity(entt::entity handle, Scene& scene);
 		Entity(const Entity& other) = default;
 
+	
+		// Метод для явного удаления сущности
+		void destroy() {
+			if (this) {
+				// Очищаем компоненты сущности из реестра
+				scene._registry.destroy(entityHandle);
+				// Сбрасываем хендл сущности
+				entityHandle = entt::null;
+			}
+		}
+	
+		// Оператор удаления сущности
+		void operator delete(void* p) {
+			Entity* entity = static_cast<Entity>(p);
+			entity->destroy();
+		}
+
 		template<typename T, typename... Args>
 		T& addComponent(Args&&... args)	{
 			return scene._registry.emplace<T>(entityHandle, std::forward<Args>(args)...);
@@ -29,6 +46,8 @@ namespace ethereal {
 		void removeComponent()	{
 			scene._registry.remove<T>(entityHandle);
 		} 
+
+		
 
 		operator bool() const { return entityHandle != entt::null; }
 	private:

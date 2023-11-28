@@ -25,30 +25,29 @@ namespace ethereal {
 					newUnitTransform.scale = { 0.3f, 0.3f, 0.3f };
 					newUnitTransform.translation = {unitGen.spawnPoint.x + offset, unitGen.spawnPoint.y, unitGen.spawnPoint.z};
 					
-					//movement
+					//movement and rotation towards destination
 					auto& newUnitMovement = newUnit.addComponent<MovementComponent>();
 					newUnitMovement.destination = unitGen.destinationPoint;
 					//newUnitTransform.rotation = {glm::radians(90.f), glm::radians(90.f), glm::radians(90.f)};
 					newUnitTransform.scale = {2.f, 2.f, 2.f};
-
-
-
 					// ¬ычисл€ем векторы движени€ и текущего направлени€ модели
 					glm::vec3 direction = glm::normalize(newUnitMovement.destination - newUnitTransform.translation);
 					glm::vec3 forwardVector(0.0f, 0.0f, -1.0f); // ѕредполагаем, что изначально моделька смотрит вдоль оси Z
-
 					// ¬ычисл€ем скал€рное произведение двух нормализованных векторов
 					float dotProduct = glm::dot(direction, forwardVector);
-
 					// ¬ычисл€ем угол между векторами в радианах
 					float angleRad = acos(dotProduct);
-
 					newUnitTransform.rotation = { glm::radians(90.f), angleRad, 0.f };
-
 					// —оздаем матрицу поворота вокруг оси Y на вычисленный угол
-					
 					//glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angleRad, glm::vec3(0.0f, 1.0f, 0.0f));
 
+					//unitComponent
+					auto& newUnitCharacteristics =  newUnit.addComponent<UnitComponent>();
+					newUnitCharacteristics.healhPoint = 100;
+					if (newUnitCharacteristics.healhPoint >= 0){newUnit.re}
+					//temporary
+					newUnitCharacteristics.damage = 10;
+		
 
 
 					newUnitMovement.speed = 1; 

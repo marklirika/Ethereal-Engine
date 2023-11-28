@@ -21,5 +21,8 @@ namespace ethereal {
 
 		return entity;
 	}
+	void Scene::removeEntity(Entity entity) {
+		_registry.destroy(entity.getEntityHandle());
+	}
 
 }

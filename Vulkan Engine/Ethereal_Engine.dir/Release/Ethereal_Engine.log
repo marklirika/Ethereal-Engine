@@ -1,7 +1,14 @@
-﻿  application.cpp
+﻿  unit_gen_system.cpp
 D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\ECS\components/unit_gen.h(11,50): warning C4244: 'initializing': conversion from '_Rep' to 'float', possible loss of data
           with
           [
               _Rep=__int64
           ]
+  application.cpp
+D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\src\ECS\components/unit_gen.h(11,50): warning C4244: 'initializing': conversion from '_Rep' to 'float', possible loss of data
+          with
+          [
+              _Rep=__int64
+          ]
+  Generating Code...
   Ethereal_Engine.vcxproj -> D:\dev\EtherealEngine\Ethereal-Engine\Vulkan Engine\Release\Ethereal_Engine.exe
