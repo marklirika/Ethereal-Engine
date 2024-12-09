@@ -1,6 +1,7 @@
 .vs
 .vscode
+/vcpkg/
 x64
-Vulkan Engine.sln
+*.sln
 build
 mingwBuild.bat
