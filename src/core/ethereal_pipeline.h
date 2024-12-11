@@ -10,7 +10,7 @@
 #include <cassert>
 
 #ifndef ENGINE_DIR
-#define ENGINE_DIR "../Vulkan Engine/"
+#define ENGINE_DIR ""
 #endif
 
 namespace ethereal {

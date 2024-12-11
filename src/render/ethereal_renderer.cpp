@@ -1,7 +1,7 @@
 #include "ethereal_renderer.h"
 
 //std
-#include <stdexcept>;
+#include <stdexcept>
 #include <array>
 #include <string>
 #include <iostream>

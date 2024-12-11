@@ -3,7 +3,7 @@
 #include "ethereal_texture.h"
 #include <stdexcept>
 #include "memory/ethereal_buffer.h"
-#include "../../external/stb/stb_image.h"
+#include "stb_image.h"
 #include "core/ethereal_device.h"
 #include <cmath>
 

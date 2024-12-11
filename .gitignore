@@ -4,4 +4,4 @@
 x64
 *.sln
 build
-mingwBuild.bat
+bin
