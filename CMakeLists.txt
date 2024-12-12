@@ -14,22 +14,16 @@ endif()
  
 project(${NAME} VERSION 1.0.0)
 
-# 1. Set VULKAN_SDK_PATH in .env.cmake to target specific vulkan version
+# Set VULKAN_SDK_PATH in .env.cmake to target specific vulkan version
 if (DEFINED VULKAN_SDK_PATH)
-  set(Vulkan_INCLUDE_DIRS "${VCPKG_INCLUDE_DIR}/vulkan" "${VCPKG_INCLUDE_DIR}/vk_video") # 1.1 Make sure this include path is correct
-  set(Vulkan_LIBRARIES "${VCPKG_LIB_DIR}/lib") # 1.2 Make sure lib path is correct
-  set(Vulkan_FOUND "True")
+    set(VULKAN_INCLUDE_DIRS "${VULKAN_SDK_PATH}/Include")
+    set(VULKAN_LIBRARIES "${VULKAN_SDK_PATH}")
+    set(VULKAN_FOUND "True")
 else()
-  find_package(Vulkan REQUIRED) # throws error if could not find Vulkan
-  message(STATUS "Found Vulkan: $ENV{VULKAN_SDK}")
+    set(VULKAN_INCLUDE_DIRS "${VCPKG_INCLUDE_DIR}/vulkan")
+    set(VULKAN_LIBRARIES "${VCPKG_LIB_DIR}")
 endif()
-if (NOT Vulkan_FOUND)
-    message(FATAL_ERROR "Could not find Vulkan library!")
-else()
-    message(STATUS "Using vulkan lib at: ${Vulkan_LIBRARIES}")
-endif()
- 
- 
+
 # 2. Set GLFW_PATH in .env.cmake to target specific glfw
 if (DEFINED GLFW_MSVC_PATH)
   message(STATUS "Using GLFW path specified in .env")
@@ -41,9 +35,7 @@ if (DEFINED GLFW_MSVC_PATH)
     set(GLFW_LIB "${VCPKG_LIB_DIR}/lib") # 2.2 make sure matches glfw mingw subdirectory
   endif()
 else()
-  find_package(glfw3 3.3 REQUIRED)
   set(GLFW_LIB glfw)
-  message(STATUS "Found GLFW")
 endif()
 if (NOT GLFW_LIB)
     message(FATAL_ERROR "Could not find glfw library!")
@@ -79,7 +71,8 @@ if (WIN32)
  set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src)
   target_include_directories(${PROJECT_NAME} PUBLIC
     "${PROJECT_SOURCE_DIR}/src"
-    ${Vulkan_INCLUDE_DIRS}
+    ${VCPKG_INCLUDE_DIR}
+    ${VULKAN_INCLUDE_DIRS}
     ${GLFW_INCLUDE_DIRS}
     ${GLM_PATH}
     )
@@ -95,7 +88,7 @@ elseif (UNIX)
     target_include_directories(${PROJECT_NAME} PUBLIC
       ${PROJECT_SOURCE_DIR}/src
     )
-    target_link_libraries(${PROJECT_NAME} glfw3 ${Vulkan_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} glfw3 ${VULKAN_LIBRARIES})
 endif()
 
 
@@ -105,17 +98,15 @@ glfw3.dll
 vulkan-1.dll
 )
 
-# Целевая директория, куда будут копироваться файлы
 set(BUILD_DIR "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 
-# Выполнение команды после сборки проекта
 foreach(DLL ${DLL_FILES})
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${PROJECT_SOURCE_DIR}/${VCPKG_BIN_DIR}/${DLL}"
         "${PROJECT_SOURCE_DIR}/build"
-        COMMENT "Копирование ${DLL} в ${BUILD_DIR}"
+        COMMENT "Copying ${DLL} into ${BUILD_DIR}"
     )
 endforeach()
 
