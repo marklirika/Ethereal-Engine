@@ -42,8 +42,8 @@ for %%T in (%TOOLS_LIST%) do (
 )
 
 echo "Cloning vcpkg..."
-git clone https://github.com/microsoft/vcpkg.git
-cd vcpkg
+git clone https://github.com/microsoft/vcpkg.git "%ROOT_DIR%\vcpkg"
+cd "%ROOT_DIR%\vcpkg"
 
 call bootstrap-vcpkg.bat
 
